@@ -113,25 +113,23 @@ router.post("/submit-test", authMiddleware, async (req, res) => {
     let detailedResults = [];
 
     console.log("📊 Processing answers...");
-    answers.forEach(ans => {
-      const question = session.questions.find(
-        q => q._id.toString() === ans.questionId
-      );
+    const answersByQuestionId = new Map(
+      answers.map((ans) => [ans.questionId, ans.selectedAnswer])
+    );
 
-      if (question) {
-        const isCorrect =
-          question.correctAnswer === ans.selectedAnswer;
+    detailedResults = session.questions.map((question) => {
+      const selectedAnswer = answersByQuestionId.get(question._id.toString()) || null;
+      const isCorrect = selectedAnswer === question.correctAnswer;
 
-        if (isCorrect) score++;
+      if (isCorrect) score++;
 
-        detailedResults.push({
-          questionId: question._id,
-          question: question.question,
-          selectedAnswer: ans.selectedAnswer,
-          correctAnswer: question.correctAnswer,
-          isCorrect
-        });
-      }
+      return {
+        questionId: question._id,
+        question: question.question,
+        selectedAnswer,
+        correctAnswer: question.correctAnswer,
+        isCorrect
+      };
     });
 
     console.log("📈 Score calculated:", score, "/", session.questions.length);

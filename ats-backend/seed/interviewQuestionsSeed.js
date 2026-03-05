@@ -26,7 +26,8 @@ const questions = [
       "Career goals alignment"
     ],
     followUpPrompt: "What specific achievements are you most proud of?",
-    timeLimit: 120
+    timeLimit: 120,
+    round: 1
   },
   {
     questionText: "Describe a situation where you faced a difficult problem at work and how you solved it.",
@@ -64,7 +65,8 @@ const questions = [
       "Communication with team/management"
     ],
     followUpPrompt: "Can you give a specific example of managing a stressful project?",
-    timeLimit: 120
+    timeLimit: 120,
+    round: 1
   },
   {
     questionText: "Tell me about a time when you had to work with a difficult team member or manager.",
@@ -349,7 +351,230 @@ const questions = [
       "Return target index"
     ],
     followUpPrompt: "How would you handle duplicates in the array?",
-    timeLimit: 180
+    timeLimit: 180,
+    round: 1
+  },
+  
+  // ===== ROUND 2: TECHNICAL STACK QUESTIONS =====
+  {
+    questionText: "What is your preferred tech stack and why did you choose it? Explain the components (frontend, backend, database).",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Clear understanding of each layer",
+      "Knowledge of technology choices",
+      "Trade-offs awareness",
+      "Practical experience mentioned",
+      "Scalability considerations"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Frontend framework (React, Vue, Angular)",
+      "Backend runtime/language (Node.js, Python, Java)",
+      "Database choice (SQL vs NoSQL)",
+      "Why these choices fit the use case",
+      "Experience with chosen stack"
+    ],
+    followUpPrompt: "Have you used this stack in production? What challenges did you face?",
+    timeLimit: 180,
+    round: 2
+  },
+  {
+    questionText: "Describe the differences between SQL and NoSQL databases. When would you use each?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Understanding of both paradigms",
+      "ACID vs BASE properties mentioned",
+      "Use case differentiation",
+      "Scalability considerations",
+      "Real-world examples"
+    ],
+    suggestedAnswerKeyPoints: [
+      "SQL: relational, ACID transactions, structured schema",
+      "NoSQL: flexible schema, horizontal scalability",
+      "SQL for transactional systems",
+      "NoSQL for high-volume, unstructured data",
+      "Examples: PostgreSQL, MongoDB, DynamoDB"
+    ],
+    followUpPrompt: "Have you used both? Compare a specific project experience.",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "Explain microservices architecture. What are the benefits and challenges compared to monolithic architecture?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "Clear architecture understanding",
+      "Service decomposition knowledge",
+      "API communication concepts",
+      "Scalability and deployment benefits",
+      "Challenges like distributed systems"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Monolithic: single codebase, easier to start",
+      "Microservices: independent services, scalable",
+      "Independent deployment and scaling",
+      "Service-to-service communication (APIs, queues)",
+      "Challenges: distributed debugging, data consistency, complexity"
+    ],
+    followUpPrompt: "Have you designed or maintained a microservices system? Describe the architecture.",
+    timeLimit: 180,
+    round: 2
+  },
+  {
+    questionText: "What are the pros and cons of using containerization (Docker) and orchestration (Kubernetes)?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "Docker concepts understanding",
+      "Container benefits clarity",
+      "Kubernetes orchestration knowledge",
+      "Deployment considerations",
+      "Resource management awareness"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Docker: consistency, isolation, lightweight",
+      "Kubernetes: orchestration, scaling, load balancing",
+      "Environment parity across development and production",
+      "Challenges: complexity, learning curve",
+      "Resource overhead and management"
+    ],
+    followUpPrompt: "Have you deployed applications with Docker and Kubernetes?",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "Discuss caching strategies in a web application. Where would you implement caching?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Caching layer understanding",
+      "Multiple caching strategies mentioned",
+      "Performance impact awareness",
+      "Cache invalidation knowledge",
+      "Practical implementation examples"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Client-side caching (browser cache, localStorage)",
+      "Server-side caching (Redis, Memcached)",
+      "Database query caching",
+      "HTTP caching headers and strategies",
+      "Cache invalidation and TTL management"
+    ],
+    followUpPrompt: "How would you handle cache invalidation in a distributed system?",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "Explain the concept of API design. What makes a good REST API?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "REST principles understanding",
+      "HTTP methods usage",
+      "Status codes knowledge",
+      "Versioning approach",
+      "Documentation and conventions"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Resource-based URLs",
+      "Proper HTTP methods (GET, POST, PUT, DELETE)",
+      "Appropriate status codes (200, 201, 400, 404, 500)",
+      "Versioning strategy (v1, v2 in URL or header)",
+      "Clear documentation and error handling"
+    ],
+    followUpPrompt: "Have you designed APIs for production systems? What did you learn?",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "How do you ensure security in your tech stack? What security measures would you implement?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "Security awareness",
+      "Authentication knowledge",
+      "Data protection understanding",
+      "Encryption concepts",
+      "Common vulnerabilities awareness"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Authentication (JWT, OAuth, sessions)",
+      "Authorization and access control",
+      "Data encryption in transit (HTTPS/TLS) and at rest",
+      "Input validation and sanitization",
+      "Protection against common attacks (SQL injection, XSS, CSRF)"
+    ],
+    followUpPrompt: "Have you implemented authentication in production? Describe the approach.",
+    timeLimit: 180,
+    round: 2
+  },
+  {
+    questionText: "What is CI/CD? How would you set up a CI/CD pipeline for a web application?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "CI/CD concept understanding",
+      "Pipeline stages knowledge",
+      "Testing strategy awareness",
+      "Deployment automation understanding",
+      "Tools and best practices"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Continuous Integration: automated testing on code push",
+      "Continuous Deployment: automated release to production",
+      "Pipeline stages: code → build → test → deploy",
+      "Tools: GitHub Actions, GitLab CI, Jenkins, CircleCI",
+      "Testing stages and deployment strategies (blue-green, canary)"
+    ],
+    followUpPrompt: "Have you set up a CI/CD pipeline? Describe the tools and stages.",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "Describe your experience with cloud platforms (AWS, Azure, GCP). What services have you used?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Cloud platform familiarity",
+      "Service knowledge (Compute, Storage, Databases)",
+      "Cost and scalability awareness",
+      "Practical project experience",
+      "Cloud architecture understanding"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Compute services (EC2, App Engine, Compute Engine)",
+      "Storage solutions (S3, Cloud Storage, Blob Storage)",
+      "Database services (RDS, Firestore, Cosmos DB)",
+      "Managed services vs self-hosted trade-offs",
+      "Cost optimization and resource scaling"
+    ],
+    followUpPrompt: "Walk through a specific cloud application you built.",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "What are the key principles of clean code and how do you maintain code quality in your projects?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Code quality understanding",
+      "Best practices knowledge",
+      "Maintainability awareness",
+      "Testing practices",
+      "Team collaboration focus"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Readable, self-documenting code",
+      "DRY principle (Don't Repeat Yourself)",
+      "SOLID principles",
+      "Code reviews and pair programming",
+      "Automated testing and linting tools"
+    ],
+    followUpPrompt: "How do you enforce code quality standards in a team?",
+    timeLimit: 120,
+    round: 2
   }
 ];
 

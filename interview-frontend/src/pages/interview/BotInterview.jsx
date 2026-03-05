@@ -7,6 +7,8 @@ import AnimatedBot from '../../components/AnimatedBot';
 
 function BotInterview() {
   const navigate = useNavigate();
+  const [currentRound, setCurrentRound] = useState(1);
+  const [roundSelection, setRoundSelection] = useState(true); // Show round selection screen
   const [sessionId, setSessionId] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -27,40 +29,62 @@ function BotInterview() {
   const sessionStartTime = useRef(null);
   const token = localStorage.getItem('token');
 
-  // Initialize interview session
+  // Initialize component - show round selection screen
   useEffect(() => {
-    const initializeInterview = async () => {
-      try {
-        setLoading(true);
-        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-        const res = await axios.post(
-          `${API_URL}/api/bot-interview/start`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
+    setLoading(false);
+  }, []);
 
-        setSessionId(res.data.sessionId);
-        setQuestions(res.data.questions);
-        sessionStartTime.current = new Date();
-        
-        // Speak the first question
-        if (res.data.questions.length > 0) {
-          setTimeout(() => {
-            speakQuestion(res.data.questions[0].question);
-          }, 1000);
-        }
-      } catch (err) {
-        console.error("Failed to start interview:", err);
-        alert("Failed to start interview. Please try again.");
-      } finally {
-        setLoading(false);
+  // Initialize interview session
+  const initializeInterview = async (round = 1, existingSessionId = null) => {
+    try {
+      setLoading(true);
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const payload = { round };
+      if (existingSessionId) {
+        payload.sessionId = existingSessionId;
       }
-    };
 
-    initializeInterview();
-  }, [token]);
+      const res = await axios.post(
+        `${API_URL}/api/bot-interview/start`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setSessionId(res.data.sessionId);
+      setQuestions(res.data.questions);
+      setCurrentRound(res.data.round || round);
+      setRoundSelection(false);
+      sessionStartTime.current = new Date();
+      
+      // Speak the first question
+      if (res.data.questions.length > 0) {
+        setTimeout(() => {
+          speakQuestion(res.data.questions[0].question);
+        }, 1000);
+      }
+    } catch (err) {
+      console.error("Failed to start interview:", err);
+      alert("Failed to start interview. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Start Round 1
+  const startRound1 = () => {
+    initializeInterview(1);
+  };
+
+  // Start Round 2 (after completing Round 1)
+  const startRound2 = () => {
+    if (!sessionId) {
+      alert("Please complete Round 1 first");
+      return;
+    }
+    initializeInterview(2, sessionId);
+  };
 
   // Timer for current question
   useEffect(() => {
@@ -280,6 +304,43 @@ function BotInterview() {
     );
   }
 
+  // Round Selection Screen
+  if (roundSelection) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
+        <div className="max-w-2xl w-full">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 p-12 text-center">
+            <div className="text-6xl mb-6">🤖</div>
+            <h1 className="text-4xl font-bold mb-4">Bot Interview</h1>
+            <p className="text-gray-300 mb-2 text-lg">Two-Round Technical Interview Process</p>
+            <p className="text-amber-400 font-semibold mb-8">✓ Both rounds required for all candidates</p>
+            
+            <div className="space-y-4 mb-12">
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-6 text-left">
+                <h2 className="text-xl font-semibold text-blue-400 mb-2">📋 Round 1: Behavioral & General</h2>
+                <p className="text-gray-300">Answer general questions about yourself, leadership, problem-solving, and professional experience. Duration: ~10 minutes</p>
+                <p className="text-blue-300 text-sm mt-3">→ 5 questions covering communication, leadership, and cultural fit</p>
+              </div>
+              
+              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-6 text-left">
+                <h2 className="text-xl font-semibold text-purple-400 mb-2">💻 Round 2: Technical Stack</h2>
+                <p className="text-gray-300">Answer in-depth questions about technical architecture, databases, microservices, and modern tech stacks. Duration: ~10 minutes</p>
+                <p className="text-purple-300 text-sm mt-3">→ 5 questions on tech stack, databases, architectures, and best practices</p>
+              </div>
+            </div>
+
+            <button
+              onClick={startRound1}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-lg transition duration-300 shadow-lg hover:shadow-xl"
+            >
+              ▶️ Start Round 1: Behavioral
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Interview in progress
   if (!evaluation && questions.length > 0) {
     const currentQuestion = questions[currentQuestionIndex];
@@ -290,7 +351,7 @@ function BotInterview() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Bot Interview Round</h1>
+            <h1 className="text-3xl font-bold">Bot Interview - Round {currentRound}</h1>
             <p className="text-gray-400 mt-1">Question {currentQuestionIndex + 1} of {questions.length}</p>
           </div>
           <div className="flex gap-3 items-center">
@@ -532,7 +593,9 @@ function BotInterview() {
             <div className="bg-gray-900 rounded-xl p-6 mb-6">
               <h2 className="text-xl font-bold mb-6 text-cyan-400">Performance Scores</h2>
               <div className="space-y-4">
-                {Object.entries(evaluation.scores).map(([key, score]) => (
+                {Object.entries(evaluation.scores || {})
+                  .filter(([key, value]) => key !== 'overall' && typeof value === 'number')
+                  .map(([key, score]) => (
                   <div key={key}>
                     <div className="flex justify-between mb-2">
                       <span className="font-semibold capitalize">
@@ -620,18 +683,35 @@ function BotInterview() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 mt-8 justify-center">
+        <div className="flex gap-4 mt-8 justify-center flex-wrap">
+          {currentRound === 1 && (
+            <button
+              onClick={startRound2}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
+            >
+              ➜ Proceed to Round 2 (Technical Stack)
+            </button>
+          )}
+          
+          {currentRound === 2 && (
+            <button
+              onClick={() => navigate('/student-dashboard')}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
+            >
+              ✅ Complete Interview
+            </button>
+          )}
+          
           <button
-            onClick={() => navigate('/student-dashboard')}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
+            onClick={() => {
+              setRoundSelection(true);
+              setEvaluation(null);
+              setQuestions([]);
+              setCurrentQuestionIndex(0);
+            }}
+            className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
           >
-            📊 View Dashboard
-          </button>
-          <button
-            onClick={() => navigate('/bot-interview')}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
-          >
-            🔄 Start New Interview
+            🔄 Start Over
           </button>
         </div>
       </div>

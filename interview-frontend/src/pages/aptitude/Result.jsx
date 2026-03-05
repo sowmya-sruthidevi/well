@@ -7,7 +7,6 @@ export default function Result() {
   const navigate = useNavigate();
   const [result, setResult] = useState(null);
   const [showOnlyWrong, setShowOnlyWrong] = useState(false);
-  const [autoRedirect, setAutoRedirect] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("result");
@@ -21,14 +20,6 @@ export default function Result() {
       const parsedResult = JSON.parse(stored);
       console.log("✅ Parsed result:", parsedResult);
       setResult(parsedResult);
-      
-      // Auto-redirect to dashboard after 5 seconds
-      const timer = setTimeout(() => {
-        setAutoRedirect(true);
-        navigate("/student-dashboard");
-      }, 5000);
-      
-      return () => clearTimeout(timer);
     }
   }, [navigate]);
 
@@ -62,12 +53,6 @@ export default function Result() {
           <p className="text-gray-300 max-w-xl mx-auto mb-6">
             {result.feedback}
           </p>
-
-          {!autoRedirect && (
-            <p className="text-yellow-400 text-sm mb-4">
-              ⏱️ Redirecting to dashboard in 5 seconds...
-            </p>
-          )}
 
           <div className="flex justify-center gap-4 items-center">
             <span className="text-green-400 font-semibold">
