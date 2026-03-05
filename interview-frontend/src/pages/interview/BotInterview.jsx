@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
+import Editor from '@monaco-editor/react';
 import AnimatedBot from '../../components/AnimatedBot';
 
 function BotInterview() {
@@ -19,6 +20,7 @@ function BotInterview() {
   const [recordingText, setRecordingText] = useState("");
   const [isBotSpeaking, setIsBotSpeaking] = useState(false);
   const [isBotMuted, setIsBotMuted] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const webcamRef = useRef(null);
   const recognitionRef = useRef(null);
   const speechSynthesisRef = useRef(null);
@@ -361,31 +363,77 @@ function BotInterview() {
             {/* Answer Input */}
             <div className="bg-gray-900 rounded-xl p-6 mb-6">
               <h3 className="text-lg font-bold mb-4">Your Answer</h3>
-              <textarea
-                value={currentAnswer}
-                onChange={(e) => handleAnswerChange(e.target.value)}
-                placeholder="Type your answer here or use voice recording..."
-                className="w-full bg-gray-800 text-white p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-4"
-                rows={5}
-              />
+              
+              {currentQuestion.category === 'technical' ? (
+                <>
+                  {/* Code Editor for Technical Questions */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-semibold mb-2">Select Programming Language:</label>
+                    <select
+                      value={selectedLanguage}
+                      onChange={(e) => setSelectedLanguage(e.target.value)}
+                      className="w-full md:w-48 bg-gray-800 text-white p-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    >
+                      <option value="javascript">JavaScript</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="cpp">C++</option>
+                      <option value="csharp">C#</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="go">Go</option>
+                      <option value="rust">Rust</option>
+                      <option value="sql">SQL</option>
+                    </select>
+                  </div>
+                  
+                  <div className="border border-gray-700 rounded-lg overflow-hidden mb-4 bg-gray-800">
+                    <Editor
+                      height="300px"
+                      language={selectedLanguage}
+                      value={currentAnswer}
+                      onChange={(value) => handleAnswerChange(value || "")}
+                      theme="vs-dark"
+                      options={{
+                        minimap: { enabled: false },
+                        fontSize: 14,
+                        wordWrap: 'on',
+                        scrollBeyondLastLine: false,
+                        tabSize: 2
+                      }}
+                    />
+                  </div>
+                  <p className="text-sm text-gray-400 mb-4">💡 Write your solution in the language selected above</p>
+                </>
+              ) : (
+                <>
+                  {/* Text Answer for Behavioral Questions */}
+                  <textarea
+                    value={currentAnswer}
+                    onChange={(e) => handleAnswerChange(e.target.value)}
+                    placeholder="Type your answer here or use voice recording..."
+                    className="w-full bg-gray-800 text-white p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-4"
+                    rows={5}
+                  />
 
-              {/* Voice Recording */}
-              <div className="flex gap-3 items-center">
-                <button
-                  onClick={toggleSpeechRecording}
-                  disabled={submitting}
-                  className={`px-6 py-2 rounded-lg font-semibold transition ${
-                    isRecording
-                      ? "bg-red-600 hover:bg-red-700"
-                      : "bg-purple-600 hover:bg-purple-700"
-                  } disabled:opacity-50`}
-                >
-                  {isRecording ? "🛑 Stop Recording" : "🎤 Start Recording"}
-                </button>
-                {isRecording && (
-                  <span className="text-red-400 font-semibold animate-pulse">● Recording...</span>
-                )}
-              </div>
+                  {/* Voice Recording */}
+                  <div className="flex gap-3 items-center">
+                    <button
+                      onClick={toggleSpeechRecording}
+                      disabled={submitting}
+                      className={`px-6 py-2 rounded-lg font-semibold transition ${
+                        isRecording
+                          ? "bg-red-600 hover:bg-red-700"
+                          : "bg-purple-600 hover:bg-purple-700"
+                      } disabled:opacity-50`}
+                    >
+                      {isRecording ? "🛑 Stop Recording" : "🎤 Start Recording"}
+                    </button>
+                    {isRecording && (
+                      <span className="text-red-400 font-semibold animate-pulse">● Recording...</span>
+                    )}
+                  </div>
+                </>
+              )}
 
               {/* Feedback from previous answer */}
               {feedback && (

@@ -248,6 +248,108 @@ const questions = [
     ],
     followUpPrompt: "What's your plan to address this development area?",
     timeLimit: 120
+  },
+
+  // Technical Coding Questions
+  {
+    questionText: "Write a function to reverse a string. Write the code in your preferred language.",
+    category: "technical",
+    difficulty: "easy",
+    evaluationCriteria: [
+      "Correct algorithm",
+      "Code syntax and structure",
+      "Handles edge cases",
+      "Code clarity and readability"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Input validation",
+      "Efficient approach",
+      "Proper variable naming",
+      "Comments for clarity",
+      "Testing with examples"
+    ],
+    followUpPrompt: "Can you optimize it further or provide an alternative approach?",
+    timeLimit: 180
+  },
+  {
+    questionText: "Write a function to find the maximum sum of a subarray (Kadane's algorithm). Code in your preferred language.",
+    category: "technical",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Algorithm correctness",
+      "Time complexity understanding",
+      "Code implementation",
+      "Edge case handling"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Understand the problem",
+      "Dynamic programming approach",
+      "Track current and max sum",
+      "Handle negative numbers",
+      "Optimize for O(n) time complexity"
+    ],
+    followUpPrompt: "What's the time and space complexity of your solution?",
+    timeLimit: 180
+  },
+  {
+    questionText: "Write a function to check if a string is a palindrome. Code in your preferred language.",
+    category: "technical",
+    difficulty: "easy",
+    evaluationCriteria: [
+      "Correct palindrome detection",
+      "Case handling",
+      "Special character handling",
+      "Code efficiency"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Handle case insensitivity",
+      "Consider spaces and punctuation",
+      "Two-pointer approach",
+      "Recursive or iterative solution",
+      "Proper validation"
+    ],
+    followUpPrompt: "How would you handle special characters and spaces?",
+    timeLimit: 180
+  },
+  {
+    questionText: "Write a function to find all unique combinations of a given set. Code in your preferred language.",
+    category: "technical",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "Correct combination generation",
+      "No duplicates",
+      "Recursive logic",
+      "Efficient implementation"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Backtracking approach",
+      "Base case definition",
+      "Recursive case logic",
+      "Memory efficient",
+      "Proper result tracking"
+    ],
+    followUpPrompt: "How would you modify this to find permutations instead?",
+    timeLimit: 240
+  },
+  {
+    questionText: "Write a function to implement binary search on a sorted array. Code in your preferred language.",
+    category: "technical",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Correct binary search logic",
+      "Proper boundary handling",
+      "Time complexity O(log n)",
+      "Error handling"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Mid-point calculation",
+      "Left and right pointers",
+      "Comparison logic",
+      "Loop termination",
+      "Return target index"
+    ],
+    followUpPrompt: "How would you handle duplicates in the array?",
+    timeLimit: 180
   }
 ];
 

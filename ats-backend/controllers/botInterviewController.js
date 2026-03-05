@@ -24,7 +24,7 @@ exports.startInterview = async (req, res) => {
     // Get 5 random questions (mix of difficulties)
     const questions = await InterviewQuestion.aggregate([
       { $sample: { size: 5 } },
-      { $project: { _id: 1, questionText: 1, timeLimit: 1 } }
+      { $project: { _id: 1, questionText: 1, timeLimit: 1, category: 1 } }
     ]);
 
     if (questions.length === 0) {
@@ -39,6 +39,7 @@ exports.startInterview = async (req, res) => {
       questions: questions.map(q => ({
         questionId: q._id,
         question: q.questionText,
+        category: q.category,
         userAnswer: "",
         answerQuality: 0,
         feedback: ""
@@ -60,6 +61,7 @@ exports.startInterview = async (req, res) => {
       questions: session.questions.map(q => ({
         questionId: q.questionId,
         question: q.question,
+        category: q.category,
         timeLimit: questions.find(x => x._id.toString() === q.questionId.toString())?.timeLimit || 120
       }))
     });
