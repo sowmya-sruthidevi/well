@@ -62,7 +62,7 @@ function BotInterview() {
       if (res.data.questions.length > 0) {
         setTimeout(() => {
           speakQuestion(res.data.questions[0].question);
-        }, 1000);
+        }, 500); // Reduced delay for faster startup
       }
     } catch (err) {
       console.error("Failed to start interview:", err);
@@ -83,6 +83,13 @@ function BotInterview() {
       alert("Please complete Round 1 first");
       return;
     }
+    // Clear state before starting Round 2
+    setEvaluation(null);
+    setFeedback(null);
+    setCurrentQuestionIndex(0);
+    setUserAnswers({});
+    setRecordingText("");
+    
     initializeInterview(2, sessionId);
   };
 
@@ -116,8 +123,16 @@ function BotInterview() {
   useEffect(() => {
     if (evaluation && currentRound === 1 && sessionId) {
       const timer = setTimeout(() => {
-        startRound2();
-      }, 3000); // 3 second delay to show results
+        // Clear evaluation and questions before loading Round 2
+        setEvaluation(null);
+        setFeedback(null);
+        setCurrentQuestionIndex(0);
+        setUserAnswers({});
+        setRecordingText("");
+        
+        // Auto-start Round 2
+        initializeInterview(2, sessionId);
+      }, 2000); // 2 second delay to show results
       
       return () => clearTimeout(timer);
     }
@@ -588,8 +603,8 @@ function BotInterview() {
         {/* Auto-start Round 2 notification for Round 1 */}
         {isRound1Completed && (
           <div className="mb-6 bg-gradient-to-r from-purple-600 to-blue-600 border border-purple-400 rounded-lg p-4 text-center animate-pulse">
-            <p className="text-lg font-semibold">✨ Excellent! Starting Round 2 automatically in 3 seconds...</p>
-            <p className="text-sm text-gray-200 mt-1">Get ready for technical questions and coding challenges!</p>
+            <p className="text-lg font-semibold">✨ Excellent! Preparing Round 2...</p>
+            <p className="text-sm text-gray-200 mt-1">Starting technical questions and coding challenges in a moment</p>
           </div>
         )}
 
@@ -704,28 +719,28 @@ function BotInterview() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 mt-8 justify-center flex-wrap">
-          {currentRound === 2 && (
+        {!isRound1Completed && (
+          <div className="flex gap-4 mt-8 justify-center flex-wrap">
             <button
               onClick={() => navigate('/student-dashboard')}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
             >
               ✅ Complete Interview
             </button>
-          )}
-          
-          <button
-            onClick={() => {
-              setRoundSelection(true);
-              setEvaluation(null);
-              setQuestions([]);
-              setCurrentQuestionIndex(0);
-            }}
-            className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
-          >
-            🔄 Start Over
-          </button>
-        </div>
+            
+            <button
+              onClick={() => {
+                setRoundSelection(true);
+                setEvaluation(null);
+                setQuestions([]);
+                setCurrentQuestionIndex(0);
+              }}
+              className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
+            >
+              🔄 Start Over
+            </button>
+          </div>
+        )}
       </div>
     );
   }

@@ -119,16 +119,17 @@ exports.startInterview = async (req, res) => {
       ];
     } else {
       // ROUND 2: Technical Stack + Coding Interview
-      // Get both technical stack and coding questions for a comprehensive technical round
-      const stackQuestions = await InterviewQuestion.find({
-        category: "technical-stack",
-        round: 2
-      }).limit(3);
-
-      const codingQuestions = await InterviewQuestion.find({
-        category: "technical-coding",
-        round: 2
-      }).limit(2);
+      // Load questions in parallel for faster response
+      const [stackQuestions, codingQuestions] = await Promise.all([
+        InterviewQuestion.find({
+          category: "technical-stack",
+          round: 2
+        }).limit(3).lean(),
+        InterviewQuestion.find({
+          category: "technical-coding",
+          round: 2
+        }).limit(2).lean()
+      ]);
 
       if (stackQuestions.length === 0 && codingQuestions.length === 0) {
         return res.status(400).json({ 
