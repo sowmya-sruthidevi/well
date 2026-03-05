@@ -428,9 +428,9 @@ function BotInterview() {
             <div className="bg-gray-900 rounded-xl p-6 mb-6">
               <h3 className="text-lg font-bold mb-4">Your Answer</h3>
               
-              {currentQuestion.category === 'technical' ? (
+              {(currentQuestion.category === 'technical' || currentQuestion.category === 'technical-coding') ? (
                 <>
-                  {/* Code Editor for Technical Questions */}
+                  {/* Code Editor for Technical & Coding Questions */}
                   <div className="mb-4">
                     <label className="block text-sm font-semibold mb-2">Select Programming Language:</label>
                     <select

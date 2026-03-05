@@ -575,6 +575,120 @@ const questions = [
     followUpPrompt: "How do you enforce code quality standards in a team?",
     timeLimit: 120,
     round: 2
+  },
+
+  // ===== ROUND 2: TECHNICAL CODING QUESTIONS =====
+  {
+    questionText: "Write a function that finds the most common character in a string (excluding spaces). Explain your approach.",
+    category: "technical-coding",
+    difficulty: "easy",
+    evaluationCriteria: [
+      "Correct implementation",
+      "Handles edge cases",
+      "Time complexity consideration",
+      "Code readability",
+      "Proper explanation"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Use hash map/object to count characters",
+      "Loop through string and count occurrences",
+      "Find character with maximum count",
+      "Return the most common character",
+      "Handle edge cases (empty string, ties)"
+    ],
+    followUpPrompt: "How would you handle case sensitivity or multiple characters with the same frequency?",
+    timeLimit: 300,
+    round: 2
+  },
+  {
+    questionText: "Implement a function to check if a string is a valid palindrome (considering only alphanumeric characters, case-insensitive).",
+    category: "technical-coding",
+    difficulty: "easy",
+    evaluationCriteria: [
+      "Correct palindrome logic",
+      "Proper character filtering",
+      "Case handling",
+      "Efficient approach",
+      "Edge case handling"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Filter to keep only alphanumeric characters",
+      "Convert to lowercase",
+      "Compare from start and end moving inward",
+      "Return true if all characters match",
+      "Handle empty and single character strings"
+    ],
+    followUpPrompt: "Can you optimize this to work in-place without creating new strings?",
+    timeLimit: 240,
+    round: 2
+  },
+  {
+    questionText: "Write a function that removes duplicate characters from a string while maintaining the order of first appearance.",
+    category: "technical-coding",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Correct duplicate removal",
+      "Order preservation",
+      "Efficient algorithm",
+      "Clean code",
+      "Edge case handling"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Use a set to track seen characters",
+      "Iterate through string once",
+      "Only add character if not in set",
+      "Add to set when encountered",
+      "Handle empty strings and duplicates"
+    ],
+    followUpPrompt: "What if you needed to remove duplicates while keeping the last occurrence instead of first?",
+    timeLimit: 240,
+    round: 2
+  },
+  {
+    questionText: "Implement a simple REST API endpoint in your preferred framework that returns a list of users. Include proper error handling.",
+    category: "technical-coding",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "RESTful design principles",
+      "Proper HTTP methods",
+      "Error handling",
+      "Response format",
+      "Code structure"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Use GET for retrieving data",
+      "Return JSON response",
+      "Include proper status codes (200, 404, 500)",
+      "Add error handling try-catch blocks",
+      "Validate input parameters",
+      "Use appropriate framework methods"
+    ],
+    followUpPrompt: "How would you add pagination and filtering to this endpoint?",
+    timeLimit: 300,
+    round: 2
+  },
+  {
+    questionText: "Write a function to find all unique pairs in an array that sum to a target value. Return the pairs as a 2D array.",
+    category: "technical-coding",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "Correct pair finding logic",
+      "No duplicate pairs in result",
+      "Efficient algorithm",
+      "Proper data structures",
+      "Edge case handling"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Use hash set for O(n) lookup",
+      "Single pass through array",
+      "Track seen numbers",
+      "Check if complement exists",
+      "Avoid duplicate pairs using set",
+      "Return unique pairs"
+    ],
+    followUpPrompt: "What's the time and space complexity? Can you solve it without extra space?",
+    timeLimit: 360,
+    round: 2
   }
 ];
 

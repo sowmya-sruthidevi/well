@@ -8,7 +8,7 @@ const InterviewQuestionSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["behavioral", "technical", "problem-solving", "leadership", "culture", "technical-stack"],
+    enum: ["behavioral", "technical", "problem-solving", "leadership", "culture", "technical-stack", "technical-coding"],
     default: "behavioral"
   },
   round: {

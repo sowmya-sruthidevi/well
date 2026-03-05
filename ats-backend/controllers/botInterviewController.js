@@ -111,19 +111,25 @@ exports.startInterview = async (req, res) => {
         ...additionalQuestions
       ];
     } else {
-      // ROUND 2: Technical Stack Interview
+      // ROUND 2: Technical Stack + Coding Interview
+      // Get both technical stack and coding questions for a comprehensive technical round
       const stackQuestions = await InterviewQuestion.find({
         category: "technical-stack",
         round: 2
-      }).limit(5);
+      }).limit(3);
 
-      if (stackQuestions.length === 0) {
+      const codingQuestions = await InterviewQuestion.find({
+        category: "technical-coding",
+        round: 2
+      }).limit(2);
+
+      if (stackQuestions.length === 0 && codingQuestions.length === 0) {
         return res.status(400).json({ 
-          error: "No technical stack questions available. Please seed the database." 
+          error: "No technical questions available. Please seed the database." 
         });
       }
 
-      questions = stackQuestions.map(q => ({
+      questions = [...stackQuestions, ...codingQuestions].map(q => ({
         _id: q._id,
         questionText: q.questionText,
         timeLimit: q.timeLimit,
@@ -224,14 +230,56 @@ exports.submitAnswer = async (req, res) => {
     // If OpenAI is available, use AI for evaluation
     if (openai) {
       try {
-        const evaluationPrompt = `You are an expert interview evaluator. Evaluate this answer to the interview question.
+        let evaluationPrompt = "";
+        
+        if (fullQuestion.category === 'technical-coding') {
+          // Special evaluation for coding questions
+          evaluationPrompt = `You are an expert code reviewer. Evaluate this code solution to the programming challenge.
+
+Challenge: "${fullQuestion.questionText}"
+
+Evaluation Criteria:
+${fullQuestion.evaluationCriteria.map((c, i) => `${i + 1}. ${c}`).join('\n')}
+
+Code Quality Aspects to Check:
+- Correctness and logic soundness
+- Code readability and structure
+- Use of appropriate data structures
+- Time and space complexity
+- Edge case handling
+- Proper variable naming
+- Comments where needed
+
+Candidate's Code Solution:
+\`\`\`
+${answer}
+\`\`\`
+
+Provide:
+1. A quality score from 0-10 based on code correctness and quality
+2. Specific strengths in the solution
+3. Areas for improvement
+4. Time/Space complexity analysis (if applicable)
+5. Brief feedback on the approach
+
+Respond in JSON format ONLY:
+{
+  "score": <0-10>,
+  "strengths": ["strength1", "strength2", "strength3"],
+  "improvements": ["improvement1", "improvement2"],
+  "complexity": "Brief complexity analysis (e.g., Time: O(n), Space: O(1))",
+  "summary": "Brief summary of the solution quality"
+}`;
+        } else {
+          // Standard evaluation for other questions
+          evaluationPrompt = `You are an expert interview evaluator. Evaluate this answer to the interview question.
 
 Question: "${fullQuestion.questionText}"
 
 Evaluation Criteria:
 ${fullQuestion.evaluationCriteria.map((c, i) => `${i + 1}. ${c}`).join('\n')}
 
-Suggeste Answer Key Points:
+Suggested Answer Key Points:
 ${fullQuestion.suggestedAnswerKeyPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}
 
 Candidate's Answer:
@@ -250,13 +298,16 @@ Respond in JSON format ONLY:
   "improvements": ["improvement1", "improvement2"],
   "summary": "Brief summary of the answer quality"
 }`;
+        }
 
         const response = await openai.chat.completions.create({
           model: "gpt-4o-mini",
           messages: [
             {
               role: "system",
-              content: "You are an expert HR interviewer and evaluator. Provide fair, constructive evaluation. Always respond with valid JSON only."
+              content: fullQuestion.category === 'technical-coding' 
+                ? "You are an expert code reviewer. Provide fair, constructive evaluation of code. Always respond with valid JSON only."
+                : "You are an expert HR interviewer and evaluator. Provide fair, constructive evaluation. Always respond with valid JSON only."
             },
             {
               role: "user",
@@ -264,7 +315,7 @@ Respond in JSON format ONLY:
             }
           ],
           temperature: 0.7,
-          max_tokens: 500
+          max_tokens: 600
         });
 
         try {
@@ -273,11 +324,17 @@ Respond in JSON format ONLY:
           const evaluation = JSON.parse(jsonMatch ? jsonMatch[0] : content);
           
           answerQuality = Math.min(10, Math.max(0, evaluation.score || 5));
-          feedback = evaluation.summary || "Good answer with relevant points.";
+          if (fullQuestion.category === 'technical-coding') {
+            feedback = `${evaluation.summary || "Code solution reviewed."} ${evaluation.complexity ? `Complexity: ${evaluation.complexity}` : ""}`;
+          } else {
+            feedback = evaluation.summary || "Good answer with relevant points.";
+          }
         } catch(parseErr) {
           console.warn("Failed to parse AI evaluation, using fallback");
           answerQuality = getRandomScore();
-          feedback = "Your answer addressed the question with relevant points.";
+          feedback = fullQuestion.category === 'technical-coding' 
+            ? "Code solution evaluated. Ensure proper logic and edge case handling."
+            : "Your answer addressed the question with relevant points.";
         }
       } catch(aiErr) {
         console.warn("AI evaluation failed, using fallback:", aiErr.message);
