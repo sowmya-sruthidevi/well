@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.avatar-glow {
+  animation: avatarPulse 1s infinite ease-in-out;
+}
+
+@keyframes avatarPulse {
+  0% { box-shadow: 0 0 10px #22d3ee; }
+  50% { box-shadow: 0 0 30px #22d3ee; }
+  100% { box-shadow: 0 0 10px #22d3ee; }
+}

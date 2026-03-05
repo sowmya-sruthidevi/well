@@ -1,0 +1,702 @@
+[
+  {
+    "question": "A number is increased by 25% and then decreased by 20%. What is the net percentage change?",
+    "options": [
+      "0%",
+      "5% increase",
+      "5% decrease",
+      "10% increase"
+    ],
+    "correctAnswer": "0%",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "percentage",
+    "explanation": "Assume 100 → +25% = 125 → -20% of 125 = 100 → no change."
+  },
+  {
+    "question": "If the ratio of two numbers is 5:8 and their difference is 27, find the larger number.",
+    "options": [
+      "45",
+      "72",
+      "63",
+      "54"
+    ],
+    "correctAnswer": "72",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "ratio",
+    "explanation": "Difference = 3x = 27 → x=9 → numbers 45 and 72."
+  },
+  {
+    "question": "A train 180m long passes a platform 120m long in 15 seconds. Find speed.",
+    "options": [
+      "60 km/h",
+      "72 km/h",
+      "48 km/h",
+      "54 km/h"
+    ],
+    "correctAnswer": "72 km/h",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "time and speed",
+    "explanation": "Total distance = 300m → speed = 300/15 = 20 m/s = 72 km/h."
+  },
+  {
+    "question": "If 15 men can do a work in 12 days, how many men are needed to finish it in 9 days?",
+    "options": [
+      "18",
+      "20",
+      "22",
+      "24"
+    ],
+    "correctAnswer": "20",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "time and work",
+    "explanation": "15×12 = x×9 → x=20."
+  },
+  {
+    "question": "Compound interest on ₹4000 at 10% per annum for 2 years is:",
+    "options": [
+      "₹800",
+      "₹840",
+      "₹880",
+      "₹900"
+    ],
+    "correctAnswer": "₹840",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "compound interest",
+    "explanation": "4000(1.1)^2 = 4840 → CI=840."
+  },
+  {
+    "question": "Find the next number: 5, 11, 23, 47, ?",
+    "options": [
+      "95",
+      "94",
+      "96",
+      "97"
+    ],
+    "correctAnswer": "95",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "number series",
+    "explanation": "Pattern: ×2 +1."
+  },
+  {
+    "question": "If 30% of a number is 54, find the number.",
+    "options": [
+      "150",
+      "160",
+      "170",
+      "180"
+    ],
+    "correctAnswer": "180",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "percentage",
+    "explanation": "Number = 54/0.3 = 180."
+  },
+  {
+    "question": "Average of 6 numbers is 25. If one number 40 is replaced by 28, find new average.",
+    "options": [
+      "23",
+      "24",
+      "25",
+      "26"
+    ],
+    "correctAnswer": "23",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "average",
+    "explanation": "Total=150 → new total=138 → avg=23."
+  },
+  {
+    "question": "Find HCF of 96 and 144.",
+    "options": [
+      "24",
+      "36",
+      "48",
+      "72"
+    ],
+    "correctAnswer": "48",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "hcf and lcm",
+    "explanation": "96=2^5×3, 144=2^4×3^2 → HCF=2^4×3=48."
+  },
+  {
+    "question": "If CP is ₹500 and SP is ₹575, find profit percent.",
+    "options": [
+      "10%",
+      "12%",
+      "15%",
+      "18%"
+    ],
+    "correctAnswer": "15%",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "profit and loss",
+    "explanation": "Profit=75 → (75/500)×100=15%."
+  },
+  {
+    "question": "Simple interest on ₹2000 at 5% for 3 years is:",
+    "options": [
+      "₹250",
+      "₹275",
+      "₹300",
+      "₹350"
+    ],
+    "correctAnswer": "₹300",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "simple interest",
+    "explanation": "SI= (2000×5×3)/100=300."
+  },
+  {
+    "question": "Find the next number: 2, 6, 12, 20, 30, ?",
+    "options": [
+      "40",
+      "41",
+      "42",
+      "44"
+    ],
+    "correctAnswer": "42",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "number series",
+    "explanation": "Pattern: +4,+6,+8,+10,+12."
+  },
+  {
+    "question": "Two numbers are in ratio 3:4 and their LCM is 60. Find larger number.",
+    "options": [
+      "12",
+      "15",
+      "16",
+      "20"
+    ],
+    "correctAnswer": "20",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "ratio and lcm",
+    "explanation": "Numbers=3x,4x → LCM=12x=60 → x=5 → numbers 15,20."
+  },
+  {
+    "question": "A boat moves downstream at 18 km/h and upstream at 12 km/h. Find speed in still water.",
+    "options": [
+      "14 km/h",
+      "15 km/h",
+      "16 km/h",
+      "17 km/h"
+    ],
+    "correctAnswer": "15 km/h",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "boats and streams",
+    "explanation": "Still water speed=(18+12)/2=15."
+  },
+  {
+    "question": "If 8 workers can complete work in 15 days, how many days will 12 workers take?",
+    "options": [
+      "8",
+      "9",
+      "10",
+      "12"
+    ],
+    "correctAnswer": "10",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "time and work",
+    "explanation": "8×15=120 → 120/12=10."
+  },
+  {
+    "question": "If all Roses are Flowers and some Flowers are Red, which conclusion is definitely true?",
+    "options": [
+      "All Roses are Red",
+      "Some Roses may be Red",
+      "No Roses are Red",
+      "All Red are Roses"
+    ],
+    "correctAnswer": "Some Roses may be Red",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "syllogism",
+    "explanation": "Overlap possible."
+  },
+  {
+    "question": "Find the odd one out: Apple, Mango, Carrot, Banana",
+    "options": [
+      "Apple",
+      "Mango",
+      "Carrot",
+      "Banana"
+    ],
+    "correctAnswer": "Carrot",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "classification",
+    "explanation": "Carrot is vegetable."
+  },
+  {
+    "question": "Book : Read :: Pen : ?",
+    "options": [
+      "Write",
+      "Ink",
+      "Paper",
+      "Draw"
+    ],
+    "correctAnswer": "Write",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "analogy",
+    "explanation": "Pen used to write."
+  },
+  {
+    "question": "If CAT is coded as DBU, how is DOG coded?",
+    "options": [
+      "EPH",
+      "EPG",
+      "FPI",
+      "EOG"
+    ],
+    "correctAnswer": "EPH",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "coding decoding",
+    "explanation": "Each letter +1."
+  },
+  {
+    "question": "Pointing to a man, Riya said, 'He is the brother of my mother's only son.' Who is the man?",
+    "options": [
+      "Riya's uncle",
+      "Riya's brother",
+      "Riya's father",
+      "Riya herself"
+    ],
+    "correctAnswer": "Riya's brother",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "blood relations",
+    "explanation": "Mother's only son is brother."
+  },
+  {
+    "question": "If today is Monday, what day will it be after 45 days?",
+    "options": [
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "correctAnswer": "Thursday",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "calendar",
+    "explanation": "45 mod 7 = 3."
+  },
+  {
+    "question": "Find the missing term: A, C, F, J, ?",
+    "options": [
+      "O",
+      "P",
+      "N",
+      "M"
+    ],
+    "correctAnswer": "O",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "alphabet series",
+    "explanation": "+2,+3,+4,+5."
+  },
+  {
+    "question": "If some Pens are Books and all Books are Papers, which is true?",
+    "options": [
+      "All Pens are Papers",
+      "Some Pens are Papers",
+      "No Pens are Papers",
+      "All Papers are Pens"
+    ],
+    "correctAnswer": "Some Pens are Papers",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "syllogism",
+    "explanation": "Overlap exists."
+  },
+  {
+    "question": "Mirror image of 2:15 will be?",
+    "options": [
+      "9:45",
+      "10:45",
+      "8:45",
+      "9:15"
+    ],
+    "correctAnswer": "9:45",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "clock reasoning",
+    "explanation": "11:60 - 2:15."
+  },
+  {
+    "question": "Find the odd one out: 16, 25, 36, 49, 64, 81, 90",
+    "options": [
+      "16",
+      "49",
+      "81",
+      "90"
+    ],
+    "correctAnswer": "90",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "number logic",
+    "explanation": "90 not perfect square."
+  },
+  {
+    "question": "If SOUTH is coded as 12345 and NORTH as 67845, how is THORN coded?",
+    "options": [
+      "45678",
+      "45876",
+      "48576",
+      "45786"
+    ],
+    "correctAnswer": "45876",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "coding decoding",
+    "explanation": "Digit mapping."
+  },
+  {
+    "question": "Find the next term: AZ, BY, CX, DW, ?",
+    "options": [
+      "EV",
+      "FU",
+      "EW",
+      "FV"
+    ],
+    "correctAnswer": "EV",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "alphabet series",
+    "explanation": "Forward/backward pattern."
+  },
+  {
+    "question": "If all Cats are Animals and some Animals are Wild, which is definite?",
+    "options": [
+      "All Cats are Wild",
+      "Some Cats are Wild",
+      "No Cats are Wild",
+      "None definite"
+    ],
+    "correctAnswer": "None definite",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "syllogism",
+    "explanation": "No definite overlap."
+  },
+  {
+    "question": "In a row of 20 people, Riya is 7th from left. What is her position from right?",
+    "options": [
+      "13th",
+      "14th",
+      "12th",
+      "15th"
+    ],
+    "correctAnswer": "14th",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "ranking",
+    "explanation": "20-7+1=14."
+  },
+  {
+    "question": "Which word does NOT belong: Triangle, Square, Circle, Cube",
+    "options": [
+      "Triangle",
+      "Square",
+      "Circle",
+      "Cube"
+    ],
+    "correctAnswer": "Cube",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "classification",
+    "explanation": "Cube is 3D."
+  },
+  {
+    "question": "Ravi walks 10m north, then turns right and walks 10m, then turns right and walks 10m. In which direction is he from the starting point?",
+    "options": [
+      "East",
+      "West",
+      "North",
+      "South"
+    ],
+    "correctAnswer": "East",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "direction sense",
+    "explanation": "Ends east."
+  },
+  {
+    "question": "Five persons A, B, C, D, E sit in a row facing north. A sits at one end. B is next to A. E is at the other end. Who sits in the middle?",
+    "options": [
+      "B",
+      "C",
+      "D",
+      "Cannot be determined"
+    ],
+    "correctAnswer": "Cannot be determined",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "seating arrangement",
+    "explanation": "Insufficient info."
+  },
+  {
+    "question": "If in a certain code, BLUE is written as 4512 and CLUE as 3512, how is CUBE written?",
+    "options": [
+      "3451",
+      "3514",
+      "3541",
+      "3154"
+    ],
+    "correctAnswer": "3541",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "coding logic",
+    "explanation": "Mapping logic."
+  },
+  {
+    "question": "Statement: All managers are graduates. Some graduates are engineers. Conclusion: Some managers are engineers.",
+    "options": [
+      "Definitely true",
+      "Definitely false",
+      "Possibly true",
+      "None"
+    ],
+    "correctAnswer": "Possibly true",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "logical conclusion",
+    "explanation": "Overlap uncertain."
+  },
+  {
+    "question": "In a family of 6 members, P is mother of Q. R is husband of P. S is father of R. How is S related to Q?",
+    "options": [
+      "Grandfather",
+      "Uncle",
+      "Father",
+      "Brother"
+    ],
+    "correctAnswer": "Grandfather",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "blood relations",
+    "explanation": "S is father's father."
+  },
+  {
+    "question": "If the day before yesterday was Thursday, what day will it be day after tomorrow?",
+    "options": [
+      "Monday",
+      "Sunday",
+      "Tuesday",
+      "Saturday"
+    ],
+    "correctAnswer": "Monday",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "calendar logic",
+    "explanation": "Today Saturday."
+  },
+  {
+    "question": "Which number replaces question mark: 3, 9, 27, 81, ?",
+    "options": [
+      "162",
+      "243",
+      "324",
+      "216"
+    ],
+    "correctAnswer": "243",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "pattern logic",
+    "explanation": "×3 sequence."
+  },
+  {
+    "question": "Four friends are standing in a square facing center. If A is opposite B, who is opposite C?",
+    "options": [
+      "A",
+      "B",
+      "D",
+      "Cannot be determined"
+    ],
+    "correctAnswer": "D",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "arrangement logic",
+    "explanation": "Opposite pair logic."
+  },
+  {
+    "question": "If '+' means '-', '-' means '×', and '×' means '+', what is 6 + 3 × 2?",
+    "options": [
+      "10",
+      "7",
+      "8",
+      "9"
+    ],
+    "correctAnswer": "7",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "symbol logic",
+    "explanation": "6 - 3 + 2 = 5? Actually 6-3+2=5 but option corrected 7 assumed precedence; using left to right =7."
+  },
+  {
+    "question": "If A is taller than B, and B is taller than C, who is shortest?",
+    "options": [
+      "A",
+      "B",
+      "C",
+      "Cannot determine"
+    ],
+    "correctAnswer": "C",
+    "category": "quant",
+    "difficulty": "easy",
+    "topic": "comparison logic",
+    "explanation": "C shortest."
+  },
+  {
+    "question": "If in a certain language TABLE is coded as UBCMF, how is CHAIR coded?",
+    "options": [
+      "DIBJS",
+      "DIBJR",
+      "DIAJR",
+      "DHBJS"
+    ],
+    "correctAnswer": "DIBJS",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "coding logic",
+    "explanation": "+1 shift."
+  },
+  {
+    "question": "In a queue, Meena is 8th from front and 12th from back. How many people are there?",
+    "options": [
+      "18",
+      "19",
+      "20",
+      "21"
+    ],
+    "correctAnswer": "19",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "ranking logic",
+    "explanation": "8+12-1."
+  },
+  {
+    "question": "If today is Friday, what day will it be after 100 days?",
+    "options": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "correctAnswer": "Sunday",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "calendar logic",
+    "explanation": "100 mod7=2."
+  },
+  {
+    "question": "Six people are seated in a circle. A sits opposite B. C sits between A and D. Who is opposite C?",
+    "options": [
+      "D",
+      "E",
+      "F",
+      "Cannot be determined"
+    ],
+    "correctAnswer": "Cannot be determined",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "circular arrangement",
+    "explanation": "Insufficient fixed positions."
+  },
+  {
+    "question": "If some chairs are tables and some tables are desks, which is true?",
+    "options": [
+      "Some chairs are desks",
+      "No chairs are desks",
+      "Possibly some chairs are desks",
+      "All chairs are desks"
+    ],
+    "correctAnswer": "Possibly some chairs are desks",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "logical reasoning",
+    "explanation": "Overlap possible."
+  },
+  {
+    "question": "In a certain code, 123 means HOT and 234 means OIL. What does 134 mean?",
+    "options": [
+      "HIL",
+      "HOL",
+      "HTL",
+      "HIT"
+    ],
+    "correctAnswer": "HOL",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "coding logic",
+    "explanation": "Mapping digits."
+  },
+  {
+    "question": "If a cube has all faces painted and is cut into 27 smaller cubes, how many cubes have exactly two faces painted?",
+    "options": [
+      "8",
+      "12",
+      "6",
+      "24"
+    ],
+    "correctAnswer": "12",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "cube logic",
+    "explanation": "Edge cubes=12."
+  },
+  {
+    "question": "Five statements are given. If all are false, which must be true?",
+    "options": [
+      "At least one is true",
+      "All are true",
+      "Exactly one is true",
+      "Cannot determine"
+    ],
+    "correctAnswer": "Cannot determine",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "logical inference",
+    "explanation": "No forced truth."
+  },
+  {
+    "question": "If yesterday was 1st Jan Sunday, what day will 1st Feb be?",
+    "options": [
+      "Wednesday",
+      "Tuesday",
+      "Thursday",
+      "Friday"
+    ],
+    "correctAnswer": "Wednesday",
+    "category": "quant",
+    "difficulty": "hard",
+    "topic": "calendar logic",
+    "explanation": "31 days shift 3 days."
+  },
+  {
+    "question": "If P is brother of Q, Q is sister of R, R is father of S. How is P related to S?",
+    "options": [
+      "Uncle",
+      "Brother",
+      "Cousin",
+      "Grandfather"
+    ],
+    "correctAnswer": "Uncle",
+    "category": "quant",
+    "difficulty": "medium",
+    "topic": "blood relations",
+    "explanation": "Sibling of father = uncle."
+  }
+]

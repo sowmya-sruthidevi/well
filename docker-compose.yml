@@ -1,0 +1,37 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: ./ats-backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      CODE_EXEC_TEMP: /host-temp
+    env_file:
+      - ./ats-backend/.env
+    ports:
+      - "5000:5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - code-exec-temp:/host-temp
+
+  frontend:
+    build:
+      context: ./interview-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  mongo-data:
+  code-exec-temp:
