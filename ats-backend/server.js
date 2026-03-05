@@ -3,6 +3,8 @@ require("dotenv").config();
 const express=require("express");
 const mongoose=require("mongoose");
 const cors=require("cors");
+const path = require("path");
+const fs = require("fs");
 
 const app=express();
 
@@ -52,13 +54,37 @@ app.use("/api/technical",technicalRoutes);
 app.use("/api/bot-interview",botInterviewRoutes);
 
 // Serve frontend static files (for Render deployment)
-const path = require("path");
-app.use(express.static(path.join(__dirname, "../interview-frontend/build")));
+const buildPath = path.resolve(__dirname, "../interview-frontend/build");
+console.log("Looking for build at:", buildPath);
+console.log("Build exists:", fs.existsSync(buildPath));
 
-// Catch-all route for client-side routing
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../interview-frontend/build/index.html"));
-});
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+  
+  // Catch-all route for client-side routing
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(buildPath, "index.html"));
+  });
+} else {
+  console.warn("⚠️  Frontend build folder not found. Will show API-only mode.");
+  
+  // Fallback: show API status
+  app.get("/", (req, res) => {
+    res.status(200).json({ 
+      status: "API Server Running", 
+      message: "Frontend build not found. Deploy with 'npm run build' in interview-frontend folder.",
+      apiEndpoints: [
+        "/api/auth",
+        "/api/bot-interview",
+        "/api/ats",
+        "/api/gd",
+        "/api/technical",
+        "/api/dashboard",
+        "/api/questions"
+      ]
+    });
+  });
+}
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("MongoDB Connected"))
