@@ -21,17 +21,57 @@ try {
 /* START INTERVIEW SESSION */
 exports.startInterview = async (req, res) => {
   try {
-    // Get 5 random questions (mix of difficulties)
-    const questions = await InterviewQuestion.aggregate([
-      { $sample: { size: 5 } },
+    // Step 1: Always include "Tell me about yourself" as first question
+    const tellMeAboutYourself = await InterviewQuestion.findOne({
+      questionText: /Tell me about yourself/i
+    });
+
+    if (!tellMeAboutYourself) {
+      return res.status(400).json({ 
+        error: "Interview questions not properly seeded. Please run seed script." 
+      });
+    }
+
+    // Step 2: Get at least one technical question
+    const technicalQuestion = await InterviewQuestion.aggregate([
+      { $match: { category: "technical" } },
+      { $sample: { size: 1 } },
       { $project: { _id: 1, questionText: 1, timeLimit: 1, category: 1 } }
     ]);
 
-    if (questions.length === 0) {
+    if (technicalQuestion.length === 0) {
       return res.status(400).json({ 
-        error: "No interview questions available. Please seed the database." 
+        error: "No technical questions available. Please seed the database." 
       });
     }
+
+    // Step 3: Get 3 more random questions (mix of all types)
+    const additionalQuestions = await InterviewQuestion.aggregate([
+      { 
+        $match: { 
+          _id: { 
+            $nin: [
+              tellMeAboutYourself._id, 
+              technicalQuestion[0]._id
+            ] 
+          } 
+        } 
+      },
+      { $sample: { size: 3 } },
+      { $project: { _id: 1, questionText: 1, timeLimit: 1, category: 1 } }
+    ]);
+
+    // Step 4: Combine questions in order: Tell me about yourself first, then technical, then others
+    const questions = [
+      {
+        _id: tellMeAboutYourself._id,
+        questionText: tellMeAboutYourself.questionText,
+        timeLimit: tellMeAboutYourself.timeLimit,
+        category: tellMeAboutYourself.category
+      },
+      ...technicalQuestion,
+      ...additionalQuestions
+    ];
 
     const session = await BotInterview.create({
       userId: req.user?.id || req.user?.userId || req.user?._id,
