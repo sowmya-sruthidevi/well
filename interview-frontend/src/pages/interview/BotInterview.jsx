@@ -112,6 +112,17 @@ function BotInterview() {
     speechSynthesisRef.current = window.speechSynthesis;
   }, []);
 
+  // Auto-start Round 2 after Round 1 completes
+  useEffect(() => {
+    if (evaluation && currentRound === 1 && sessionId) {
+      const timer = setTimeout(() => {
+        startRound2();
+      }, 3000); // 3 second delay to show results
+      
+      return () => clearTimeout(timer);
+    }
+  }, [evaluation, currentRound, sessionId]);
+
   // Speak question when it changes
   useEffect(() => {
     if (questions.length && !evaluation && currentQuestionIndex < questions.length) {
@@ -570,12 +581,22 @@ function BotInterview() {
 
   // Results page
   if (evaluation) {
+    const isRound1Completed = currentRound === 1;
+    
     return (
       <div className="min-h-screen bg-[#0f172a] text-white p-6">
+        {/* Auto-start Round 2 notification for Round 1 */}
+        {isRound1Completed && (
+          <div className="mb-6 bg-gradient-to-r from-purple-600 to-blue-600 border border-purple-400 rounded-lg p-4 text-center animate-pulse">
+            <p className="text-lg font-semibold">✨ Excellent! Starting Round 2 automatically in 3 seconds...</p>
+            <p className="text-sm text-gray-200 mt-1">Get ready for technical questions and coding challenges!</p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Interview Results</h1>
+            <h1 className="text-3xl font-bold">Round {currentRound} Results</h1>
             <p className="text-gray-400 mt-1">Your performance evaluation</p>
           </div>
           <div className={`text-4xl font-bold px-8 py-4 rounded-lg ${
@@ -684,15 +705,6 @@ function BotInterview() {
 
         {/* Action Buttons */}
         <div className="flex gap-4 mt-8 justify-center flex-wrap">
-          {currentRound === 1 && (
-            <button
-              onClick={startRound2}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
-            >
-              ➜ Proceed to Round 2 (Technical Q&A + Coding)
-            </button>
-          )}
-          
           {currentRound === 2 && (
             <button
               onClick={() => navigate('/student-dashboard')}
