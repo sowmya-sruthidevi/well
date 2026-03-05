@@ -84,13 +84,40 @@ if (fs.existsSync(buildPath)) {
       ]
     });
   });
+} else {
+  console.warn("⚠️  Frontend build not found. API-only mode.");
+  
+  // Simple root route for health check
+  app.get("/", (req, res) => {
+    res.status(200).json({ 
+      status: "Backend is running",
+      mongodb: mongoose.connection.readyState === 1 ? "Connected" : "Not Connected",
+      apiEndpoints: ["/api/auth", "/api/bot-interview", "/api/ats", "/api/gd", "/api/technical"]
+    });
+  });
 }
 
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("MongoDB Connected"))
-.catch(err=>console.log(err));
+// MongoDB Connection with proper error handling
+console.log("🔄 Attempting MongoDB connection...");
+console.log("MONGO_URI exists:", !!process.env.MONGO_URI);
+
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
+  socketTimeoutMS: 45000,
+})
+.then(() => {
+  console.log("✅ MongoDB Connected Successfully");
+  console.log("📊 Database:", mongoose.connection.name);
+})
+.catch(err => {
+  console.error("❌ MongoDB Connection Error:");
+  console.error("Error name:", err.name);
+  console.error("Error message:", err.message);
+  console.error("Full error:", err);
+  process.exit(1); // Exit if DB fails - Render will restart
+});
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT,()=>{
-console.log(`Server running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
