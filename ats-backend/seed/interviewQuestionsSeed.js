@@ -577,6 +577,212 @@ const questions = [
     round: 2
   },
 
+  {
+    questionText: "Explain the CAP theorem in distributed systems. How does it affect database design decisions?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "CAP theorem understanding",
+      "Consistency, Availability, Partition tolerance concepts",
+      "Trade-offs awareness",
+      "Real-world application knowledge",
+      "Database selection implications"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Consistency: all nodes see same data",
+      "Availability: system always responds",
+      "Partition tolerance: system works despite network failures",
+      "Can only guarantee two of three properties",
+      "Example: Cluster consistency vs eventual consistency"
+    ],
+    followUpPrompt: "Give examples of when you'd prioritize consistency vs availability.",
+    timeLimit: 180,
+    round: 2
+  },
+  {
+    questionText: "Design a URL shortening service (like bit.ly). What are the key components and challenges?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "System design thinking",
+      "Scalability considerations",
+      "Database choice reasoning",
+      "Encoding/hashing strategy",
+      "Performance and caching awareness"
+    ],
+    suggestedAnswerKeyPoints: [
+      "API endpoints (POST for shorten, GET for redirect)",
+      "Unique ID generation (base62 encoding, hashing)",
+      "Database design (URL mapping, analytics)",
+      "Caching layer for frequently used URLs",
+      "Horizontal scaling and load balancing",
+      "Collision handling and expiration"
+    ],
+    followUpPrompt: "How would you handle 100 million URLs per day?",
+    timeLimit: 180,
+    round: 2
+  },
+  {
+    questionText: "What are design patterns? Name and explain 3 common design patterns and when to use them.",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Design pattern knowledge",
+      "Pattern application understanding",
+      "Code structure and maintenance benefits",
+      "Problem-solution mapping",
+      "Real-world usage examples"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Singleton: single instance, global access",
+      "Observer: event-driven, decoupled components",
+      "Factory: object creation abstraction",
+      "Strategy: algorithm encapsulation and switching",
+      "MVC/MVVM: separation of concerns"
+    ],
+    followUpPrompt: "Have you used these patterns in production? Describe a specific implementation.",
+    timeLimit: 180,
+    round: 2
+  },
+  {
+    questionText: "How would you optimize a slow database query? What tools and strategies would you use?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "Query optimization knowledge",
+      "Index strategy understanding",
+      "Performance analysis tools",
+      "Query execution plans",
+      "Scalability approach"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Use EXPLAIN to analyze query execution",
+      "Add indexes on frequently queried columns",
+      "Avoid SELECT *, specify needed columns",
+      "Join optimization and query restructuring",
+      "Denormalization or caching for read-heavy queries",
+      "Pagination for large datasets"
+    ],
+    followUpPrompt: "Describe a slow query you optimized and the result.",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "Explain asynchronous programming and concurrency. How do you handle it in your preferred language?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Async/await understanding",
+      "Promise and callback knowledge",
+      "Concurrency patterns",
+      "Blocking vs non-blocking concepts",
+      "Error handling in async code"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Callbacks for async operations",
+      "Promises for better readability",
+      "Async/await syntax and error handling",
+      "Thread pools and event loops",
+      "Concurrent request handling",
+      "Avoiding callback hell and race conditions"
+    ],
+    followUpPrompt: "Have you debugged concurrency issues? What happened?",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "What are the types of testing? Explain unit tests, integration tests, and end-to-end tests.",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Testing pyramid understanding",
+      "Test scope and coverage knowledge",
+      "Tools and frameworks familiarity",
+      "Test coverage importance",
+      "Practical testing strategy"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Unit tests: individual functions/methods, fastest",
+      "Integration tests: component interaction, database",
+      "E2E tests: user workflows, slowest but most realistic",
+      "Testing frameworks (Jest, Mocha, Cypress, Selenium)",
+      "Test coverage metrics and goals",
+      "CI/CD pipeline integration"
+    ],
+    followUpPrompt: "What's your approach to test coverage percentage?",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "How do you handle errors and exceptions in production code? What logging strategy would you implement?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Error handling approach",
+      "Logging strategy understanding",
+      "Debugging and monitoring knowledge",
+      "Stack trace analysis",
+      "Production reliability focus"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Try-catch error handling and custom exceptions",
+      "Structured logging with levels (INFO, WARN, ERROR)",
+      "Logging tools (ELK, Splunk, CloudWatch)",
+      "Correlation IDs for tracing requests",
+      "Error alerting and monitoring",
+      "Privacy considerations (no sensitive data in logs)"
+    ],
+    followUpPrompt: "Describe how you traced a production issue using logs.",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "What is load balancing? How would you distribute traffic across multiple servers?",
+    category: "technical-stack",
+    difficulty: "medium",
+    evaluationCriteria: [
+      "Load balancing concept",
+      "Distribution algorithms",
+      "High availability understanding",
+      "Scaling strategy",
+      "Health check awareness"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Round-robin, least connections, IP hash algorithms",
+      "Hardware vs software load balancers",
+      "Session persistence (sticky sessions)",
+      "Health checks and failover mechanisms",
+      "Geographic load balancing (CDN)",
+      "Tools: nginx, HAProxy, AWS ELB"
+    ],
+    followUpPrompt: "Have you configured load balancing in production?",
+    timeLimit: 150,
+    round: 2
+  },
+  {
+    questionText: "Explain the concept of transactions and ACID properties. Why are they important?",
+    category: "technical-stack",
+    difficulty: "hard",
+    evaluationCriteria: [
+      "ACID properties understanding",
+      "Transaction concepts",
+      "Data consistency importance",
+      "Concurrency handling knowledge",
+      "Real-world applications"
+    ],
+    suggestedAnswerKeyPoints: [
+      "Atomicity: all-or-nothing execution",
+      "Consistency: valid state transitions",
+      "Isolation: concurrent transaction independence",
+      "Durability: persistent after commit",
+      "Transaction rollback and savepoints",
+      "Deadlock prevention and resolution"
+    ],
+    followUpPrompt: "When would you sacrifice some ACID properties for performance?",
+    timeLimit: 180,
+    round: 2
+  },
+
   // ===== ROUND 2: TECHNICAL CODING QUESTIONS =====
   {
     questionText: "Write a function that finds the most common character in a string (excluding spaces). Explain your approach.",
