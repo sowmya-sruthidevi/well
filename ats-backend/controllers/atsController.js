@@ -34,25 +34,16 @@ exports.analyzeResume = async (req, res) => {
     
     console.log("STEP 4: OpenAI responded");
 
-    // 3️⃣ Weighted scoring
+    // 3️⃣ Use real scores from AI analysis
+    const skillScore = aiResult.skillMatchScore || 0;
+    const formatScore = aiResult.formatScore || 0;
+    const keywordScore = aiResult.keywordScore || 0;
 
-    const totalKeywords = aiResult.jdKeywords.length;
-    const matched = aiResult.matchedSkills.length;
-
-    const skillScore =
-      totalKeywords === 0
-        ? 0
-        : Math.round((matched / totalKeywords) * 100);
-
-    // Temporary placeholder (replace later with real logic)
-    const experienceScore = 70;
-
-    const keywordScore = skillScore;
-
+    // Calculate weighted overall score
     const overallScore = Math.round(
-      skillScore * 0.5 +
-      experienceScore * 0.3 +
-      keywordScore * 0.2
+      skillScore * 0.4 +
+      formatScore * 0.3 +
+      keywordScore * 0.3
     );
 
     // 4️⃣ Save to DB
@@ -63,7 +54,7 @@ exports.analyzeResume = async (req, res) => {
       jobDescription,
       overallScore,
       skillScore,
-      experienceScore,
+      experienceScore: formatScore, // Use format score instead
       keywordScore,
       matchedSkills: aiResult.matchedSkills,
       missingSkills: aiResult.missingSkills,

@@ -9,19 +9,29 @@ async function analyzeResumeWithAI(resumeText, jobDescription) {
   const trimmedResume = resumeText.slice(0, 8000);
 
   const prompt = `
-You are an ATS assistant.
+You are an expert ATS and resume analyst. Analyze the resume against the job description and provide:
 
-1. Extract important technical skills from JOB DESCRIPTION.
-2. Compare them with RESUME.
-3. Return structured JSON:
+1. Extract important technical skills from JOB DESCRIPTION
+2. Compare them with RESUME
+3. Analyze resume formatting and presentation quality
+4. Evaluate keyword density and ATS optimization
+5. Return structured JSON with real scores (0-100):
 
 {
  "jdKeywords": [],
  "matchedSkills": [],
  "missingSkills": [],
  "strengths": [],
- "improvementAreas": []
+ "improvementAreas": [],
+ "skillMatchScore": <number 0-100>,
+ "formatScore": <number 0-100>,
+ "keywordScore": <number 0-100>
 }
+
+For scoring:
+- skillMatchScore: How many job requirements are matched (matched/total * 100)
+- formatScore: Resume clarity, structure, and professional presentation (0-100)
+- keywordScore: How well resume is optimized for ATS and job keywords (0-100)
 
 Return ONLY valid JSON. Do NOT add explanations.
 
@@ -51,7 +61,6 @@ ${jobDescription}
 
     // Remove markdown wrappers if present
     content = content.replace(/```json|```/g, "").trim();
-
 
     try {
       const parsed = JSON.parse(content);
