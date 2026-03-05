@@ -51,6 +51,15 @@ app.use("/api/dashboard",dashboardRoutes);
 app.use("/api/technical",technicalRoutes);
 app.use("/api/bot-interview",botInterviewRoutes);
 
+// Serve frontend static files (for Render deployment)
+const path = require("path");
+app.use(express.static(path.join(__dirname, "../interview-frontend/build")));
+
+// Catch-all route for client-side routing
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../interview-frontend/build/index.html"));
+});
+
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("MongoDB Connected"))
 .catch(err=>console.log(err));
