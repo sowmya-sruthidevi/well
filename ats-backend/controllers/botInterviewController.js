@@ -66,69 +66,56 @@ exports.startInterview = async (req, res) => {
     let questions;
 
     if (round === 1) {
-      // ROUND 1: General/Behavioral Interview
-      const tellMeAboutYourself = await InterviewQuestion.findOne({
-        questionText: /Tell me about yourself/i,
-        round: 1
-      });
+      // ROUND 1: Mixed Interview (Behavioral + Basic Technical)
+      // Get diverse question types for variety
+      const [behavioral, leadership, problemSolving, technical] = await Promise.all([
+        InterviewQuestion.aggregate([
+          { $match: { category: "behavioral", round: 1 } },
+          { $sample: { size: 2 } }
+        ]),
+        InterviewQuestion.aggregate([
+          { $match: { category: { $in: ["leadership", "culture"] }, round: 1 } },
+          { $sample: { size: 1 } }
+        ]),
+        InterviewQuestion.aggregate([
+          { $match: { category: "problem-solving", round: 1 } },
+          { $sample: { size: 1 } }
+        ]),
+        InterviewQuestion.aggregate([
+          { $match: { category: "technical", round: 1 } },
+          { $sample: { size: 1 } }
+        ])
+      ]);
 
-      if (!tellMeAboutYourself) {
+      if (behavioral.length === 0 && technical.length === 0) {
         return res.status(400).json({ 
           error: "Interview questions not properly seeded. Please run seed script." 
         });
       }
 
-      // Get 1 technical and 3 additional questions for round 1
-      const technicalQuestion = await InterviewQuestion.aggregate([
-        { $match: { category: "technical", round: 1 } },
-        { $sample: { size: 1 } },
-        { $project: { _id: 1, questionText: 1, timeLimit: 1, category: 1 } }
-      ]);
-
-      if (technicalQuestion.length === 0) {
-        return res.status(400).json({ 
-          error: "No technical questions available. Please seed the database." 
-        });
-      }
-
-      const additionalQuestions = await InterviewQuestion.aggregate([
-        { 
-          $match: { 
-            _id: { 
-              $nin: [
-                tellMeAboutYourself._id, 
-                technicalQuestion[0]._id
-              ] 
-            },
-            round: 1
-          } 
-        },
-        { $sample: { size: 3 } },
-        { $project: { _id: 1, questionText: 1, timeLimit: 1, category: 1 } }
-      ]);
-
       questions = [
-        {
-          _id: tellMeAboutYourself._id,
-          questionText: tellMeAboutYourself.questionText,
-          timeLimit: tellMeAboutYourself.timeLimit,
-          category: tellMeAboutYourself.category
-        },
-        ...technicalQuestion,
-        ...additionalQuestions
-      ];
+        ...behavioral,
+        ...leadership,
+        ...problemSolving,
+        ...technical
+      ].map(q => ({
+        _id: q._id,
+        questionText: q.questionText,
+        timeLimit: q.timeLimit,
+        category: q.category
+      }));
     } else {
-      // ROUND 2: Technical Stack + Coding Interview
-      // Load questions in parallel for faster response
+      // ROUND 2: Advanced Technical Interview (Stack + Coding)
+      // Randomly select from large pool for variety
       const [stackQuestions, codingQuestions] = await Promise.all([
-        InterviewQuestion.find({
-          category: "technical-stack",
-          round: 2
-        }).limit(3).lean(),
-        InterviewQuestion.find({
-          category: "technical-coding",
-          round: 2
-        }).limit(2).lean()
+        InterviewQuestion.aggregate([
+          { $match: { category: "technical-stack", round: 2 } },
+          { $sample: { size: 3 } }
+        ]),
+        InterviewQuestion.aggregate([
+          { $match: { category: "technical-coding", round: 2 } },
+          { $sample: { size: 2 } }
+        ])
       ]);
 
       if (stackQuestions.length === 0 && codingQuestions.length === 0) {
