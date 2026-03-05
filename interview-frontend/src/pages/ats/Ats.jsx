@@ -123,7 +123,7 @@ export default function ATS() {
   const scoreData = result
     ? [
         { name: "Skill", value: result.skillScore },
-        { name: "Experience", value: result.experienceScore },
+        { name: "Format", value: Math.round((result.skillScore + result.keywordScore) / 2) },
         { name: "Keyword", value: result.keywordScore }
       ]
     : [];

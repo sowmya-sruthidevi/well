@@ -431,8 +431,8 @@ export default function StudentDashboard() {
                 <p className="text-cyan-400 font-bold">{ats.skillScore || 0}/100</p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Experience Score</p>
-                <p className="text-cyan-400 font-bold">{ats.experienceScore || 0}/100</p>
+                <p className="text-gray-400 text-sm">Format Score</p>
+                <p className="text-cyan-400 font-bold">{Math.round((ats.skillScore + ats.keywordScore) / 2) || 0}/100</p>
               </div>
               <div>
                 <p className="text-gray-400 text-sm">Keyword Score</p>
