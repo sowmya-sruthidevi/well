@@ -317,39 +317,25 @@ exports.finishInterview = async (req, res) => {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    const currentRound = session.currentRound || 1;
+    // Calculate scores for comprehensive interview
+    const evaluation = await evaluateInterview(session);
 
-    // Calculate scores based on current round
-    const evaluation = await evaluateInterview(session, currentRound);
-
-    // Update session with scores and mark round as completed
-    if (currentRound === 1) {
-      session.scores.round1 = evaluation.scores;
-    } else {
-      session.scores.round2 = evaluation.scores;
-    }
-
+    // Update session with overall scores
+    session.scores.overall = evaluation.scores;
     session.strengths = evaluation.strengths;
     session.improvements = evaluation.improvements;
     session.aiAnalysis = evaluation.aiAnalysis;
     session.recommendation = evaluation.recommendation;
     session.duration = duration || 0;
     session.answeredQuestions = session.questions.filter(q => q.userAnswer).length;
-
-    // Mark round as completed
-    const roundKey = `round${currentRound}`;
-    const roundStatus = session.roundStatus.get(roundKey) || {};
-    roundStatus.completed = true;
-    roundStatus.completedAt = new Date();
-    session.roundStatus.set(roundKey, roundStatus);
+    session.completed = true;
+    session.completedAt = new Date();
 
     await session.save();
 
     res.json({
       sessionId,
-      currentRound: currentRound,
-      roundCompleted: true,
-      canContinueToNextRound: currentRound === 1,
+      interviewCompleted: true,
       overallScore: evaluation.scores.overall,
       scores: evaluation.scores,
       strengths: evaluation.strengths,
@@ -366,7 +352,7 @@ exports.finishInterview = async (req, res) => {
 };
 
 /* EVALUATE ENTIRE INTERVIEW */
-async function evaluateInterview(session, round = 1) {
+async function evaluateInterview(session) {
   // Calculate average scores from question quality
   const answers = session.questions.filter(q => q.userAnswer);
   const avgQuality = answers.length > 0 ? 
@@ -374,27 +360,17 @@ async function evaluateInterview(session, round = 1) {
 
   let evaluation = {};
 
-  if (round === 1) {
-    // Round 1: General/Behavioral scoring
-    evaluation.scores = {
-      communicationSkills: Math.min(10, avgQuality * 0.9 + Math.random()),
-      problemSolving: Math.min(10, avgQuality * 0.85 + Math.random()),
-      leadershipPotential: Math.min(10, avgQuality * 0.8 + Math.random()),
-      cultureFit: Math.min(10, avgQuality * 0.85 + Math.random()),
-      technicalKnowledge: Math.min(10, avgQuality * 0.9 + Math.random()),
-      overall: 0
-    };
-  } else {
-    // Round 2: Technical Stack scoring
-    evaluation.scores = {
-      technicalDepth: Math.min(10, avgQuality * 0.95 + Math.random()),
-      stackKnowledge: Math.min(10, avgQuality * 1.0 + Math.random()),
-      architectureUnderstanding: Math.min(10, avgQuality * 0.9 + Math.random()),
-      bestPractices: Math.min(10, avgQuality * 0.85 + Math.random()),
-      problemSolving: Math.min(10, avgQuality * 0.9 + Math.random()),
-      overall: 0
-    };
-  }
+  // Comprehensive scoring for all criteria
+  evaluation.scores = {
+    communicationSkills: Math.min(10, avgQuality * 0.9 + Math.random()),
+    problemSolving: Math.min(10, avgQuality * 0.9 + Math.random()),
+    leadershipPotential: Math.min(10, avgQuality * 0.8 + Math.random()),
+    cultureFit: Math.min(10, avgQuality * 0.85 + Math.random()),
+    technicalKnowledge: Math.min(10, avgQuality * 0.95 + Math.random()),
+    technicalDepth: Math.min(10, avgQuality * 0.95 + Math.random()),
+    codingAbility: Math.min(10, avgQuality * 0.9 + Math.random()),
+    overall: 0
+  };
 
   evaluation.strengths = [];
   evaluation.improvements = [];
@@ -408,10 +384,7 @@ async function evaluateInterview(session, round = 1) {
         .map(q => `Q: ${q.question}\nA: ${q.userAnswer}`)
         .join("\n\n");
 
-      let analysisPrompt;
-
-      if (round === 1) {
-        analysisPrompt = `You are an expert HR interviewer and hiring manager. Analyze this candidate's interview responses for ROUND 1 (Behavioral/General).
+      const analysisPrompt = `You are an expert interviewer evaluating a comprehensive interview covering behavioral, technical, and coding aspects.
 
 Candidate Responses:
 ${fullAnswers}
@@ -421,7 +394,9 @@ Evaluate on these criteria:
 2. Problem Solving - approach, creativity, logic
 3. Leadership Potential - initiative, influence, decision-making
 4. Cultural Fit - values alignment, team orientation
-5. Technical Knowledge - depth, relevance to role
+5. Technical Knowledge - depth, relevance, breadth
+6. Technical Depth - architecture, system design, best practices
+7. Coding Ability - solution quality, logic, efficiency
 
 Provide:
 1. Score for each criterion (0-10)
@@ -436,48 +411,19 @@ Respond in JSON format ONLY:
   "leadershipPotential": <0-10>,
   "cultureFit": <0-10>,
   "technicalKnowledge": <0-10>,
+  "technicalDepth": <0-10>,
+  "codingAbility": <0-10>,
   "strengths": ["strength1", "strength2", "strength3"],
   "improvements": ["improvement1", "improvement2", "improvement3"],
   "analysis": "Overall assessment"
 }`;
-      } else {
-        analysisPrompt = `You are an expert technical interviewer and architect. Analyze this candidate's ROUND 2 (Technical Stack) responses.
-
-Candidate Responses:
-${fullAnswers}
-
-Evaluate on these criteria:
-1. Technical Depth - deep understanding, specifics
-2. Stack Knowledge - familiarity with modern technologies
-3. Architecture Understanding - system design, scalability concepts
-4. Best Practices - patterns, coding standards, optimization
-5. Problem Solving - technical approach, trade-offs
-
-Provide:
-1. Score for each criterion (0-10)
-2. Top 3 technical strengths
-3. Top 3 areas for improvement
-4. Technical assessment and recommendations
-
-Respond in JSON format ONLY:
-{
-  "technicalDepth": <0-10>,
-  "stackKnowledge": <0-10>,
-  "architectureUnderstanding": <0-10>,
-  "bestPractices": <0-10>,
-  "problemSolving": <0-10>,
-  "strengths": ["strength1", "strength2", "strength3"],
-  "improvements": ["improvement1", "improvement2", "improvement3"],
-  "analysis": "Technical assessment and recommendations"
-}`;
-      }
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
-            content: `You are an expert ${round === 1 ? 'HR' : 'technical'} interviewer. Provide candidate evaluation. Always respond with valid JSON only.`
+            content: "You are an expert interviewer. Provide candidate evaluation. Always respond with valid JSON only."
           },
           {
             role: "user",
@@ -493,25 +439,16 @@ Respond in JSON format ONLY:
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         const aiEval = JSON.parse(jsonMatch ? jsonMatch[0] : content);
 
-        if (round === 1) {
-          evaluation.scores = {
-            communicationSkills: Math.min(10, aiEval.communicationSkills || 6),
-            problemSolving: Math.min(10, aiEval.problemSolving || 6),
-            leadershipPotential: Math.min(10, aiEval.leadershipPotential || 5),
-            cultureFit: Math.min(10, aiEval.cultureFit || 6),
-            technicalKnowledge: Math.min(10, aiEval.technicalKnowledge || 6),
-            overall: 0
-          };
-        } else {
-          evaluation.scores = {
-            technicalDepth: Math.min(10, aiEval.technicalDepth || 6),
-            stackKnowledge: Math.min(10, aiEval.stackKnowledge || 6),
-            architectureUnderstanding: Math.min(10, aiEval.architectureUnderstanding || 5),
-            bestPractices: Math.min(10, aiEval.bestPractices || 6),
-            problemSolving: Math.min(10, aiEval.problemSolving || 6),
-            overall: 0
-          };
-        }
+        evaluation.scores = {
+          communicationSkills: Math.min(10, aiEval.communicationSkills || 6),
+          problemSolving: Math.min(10, aiEval.problemSolving || 6),
+          leadershipPotential: Math.min(10, aiEval.leadershipPotential || 5),
+          cultureFit: Math.min(10, aiEval.cultureFit || 6),
+          technicalKnowledge: Math.min(10, aiEval.technicalKnowledge || 6),
+          technicalDepth: Math.min(10, aiEval.technicalDepth || 6),
+          codingAbility: Math.min(10, aiEval.codingAbility || 6),
+          overall: 0
+        };
 
         evaluation.strengths = aiEval.strengths || [];
         evaluation.improvements = aiEval.improvements || [];
@@ -526,32 +463,22 @@ Respond in JSON format ONLY:
 
   // Calculate overall score
   const scores = Object.values(evaluation.scores).filter(v => typeof v === 'number' && v !== 0);
-  const roundOverall = scores.length > 0 ?
+  const overallScore = scores.length > 0 ?
     Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10 : 0;
   
-  evaluation.scores.overall = roundOverall;
+  evaluation.scores.overall = overallScore;
 
-  // Determine recommendation based on round
-  if (round === 1) {
-    if (evaluation.scores.overall >= 8) {
-      evaluation.recommendation = "Strong Fit - Move to Round 2 (Technical)";
-    } else if (evaluation.scores.overall >= 6.5) {
-      evaluation.recommendation = "Good Fit - Proceed to Round 2";
-    } else if (evaluation.scores.overall >= 5) {
-      evaluation.recommendation = "Average - Consider for Round 2";
-    } else {
-      evaluation.recommendation = "Needs Improvement - Contact for clarification";
-    }
+  // Determine recommendation
+  if (overallScore >= 8) {
+    evaluation.recommendation = "Excellent Fit - Strong Technical and Interpersonal Skills";
+  } else if (overallScore >= 7) {
+    evaluation.recommendation = "Very Good Fit - Solid Technical and Soft Skills";
+  } else if (overallScore >= 6) {
+    evaluation.recommendation = "Good Fit - Meets Most Requirements";
+  } else if (overallScore >= 5) {
+    evaluation.recommendation = "Average Performance - Has Potential with Training";
   } else {
-    if (evaluation.scores.overall >= 8) {
-      evaluation.recommendation = "Strong Technical Match - Recommend for Role";
-    } else if (evaluation.scores.overall >= 6.5) {
-      evaluation.recommendation = "Good Technical Fit - Recommend";
-    } else if (evaluation.scores.overall >= 5) {
-      evaluation.recommendation = "Average Technical Skills - Consider with Training";
-    } else {
-      evaluation.recommendation = "Technical Gaps - May Need Support";
-    }
+    evaluation.recommendation = "Needs Improvement - Consider additional support or guidance";
   }
 
   return evaluation;
