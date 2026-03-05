@@ -18,6 +18,7 @@ function GDRoom() {
   const [isBotsDiscussing, setIsBotsDiscussing] = useState(false);
   const [aiFeedback, setAiFeedback] = useState(null); // Store AI feedback
   const [showingFeedback, setShowingFeedback] = useState(false); // Show feedback UI
+  const [startTimeStamp, setStartTimeStamp] = useState(null); // Store start time separately
   const recognitionRef = useRef(null);
   const sessionRef = useRef(null);
   const evaluationRef = useRef(null);
@@ -46,10 +47,9 @@ function GDRoom() {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
-        setSession({
-          ...res.data,
-          startTime: new Date()
-        });
+        const now = Date.now();
+        setStartTimeStamp(now); // Store start time separately
+        setSession(res.data);
       } catch (err) {
         console.error("Failed to start GD:", err);
       }
@@ -194,6 +194,8 @@ function GDRoom() {
     console.log("🎬 finishGD called, token:", token ? "✓ Present" : "✗ Missing");
     
     try {
+      const durationInSeconds = startTimeStamp ? Math.round((Date.now() - startTimeStamp) / 1000) : 0;
+      
       // Step 1: Get evaluation from AI
       console.log("📊 Getting AI evaluation...");
       const evalRes = await axios.post(
@@ -202,7 +204,7 @@ function GDRoom() {
           sessionId: session.sessionId,
           speakingTime: userSpeakingTime,
           topic: session.topic,
-          duration: Math.round((new Date() - session.startTime) / 1000)
+          duration: durationInSeconds
         },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -223,7 +225,7 @@ function GDRoom() {
             scores: evaluation,
             speakingTime: userSpeakingTime,
             topic: session.topic,
-            duration: Math.round((new Date() - session.startTime) / 1000)
+            duration: durationInSeconds
           },
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -237,13 +239,13 @@ function GDRoom() {
 
       // Calculate stats and navigate to result page
       const stats = {
-        totalDuration: Math.round((new Date() - session.startTime) / 1000),
+        totalDuration: durationInSeconds,
         userSpeakingTime: userSpeakingTime,
         messageCount: session.transcript?.filter(t => t.role === "user").length || 0,
-        participationPercentage: Math.min(
+        participationPercentage: durationInSeconds > 0 ? Math.min(
           100,
-          Math.round((userSpeakingTime / Math.round((new Date() - session.startTime) / 1000)) * 100)
-        )
+          Math.round((userSpeakingTime / durationInSeconds) * 100)
+        ) : 0
       };
 
       setTimeout(() => {
