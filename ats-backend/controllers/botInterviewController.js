@@ -39,7 +39,14 @@ exports.startInterview = async (req, res) => {
       // Clear questions for round 2
       session.questions = [];
       session.currentRound = 2;
-      session.roundStatus.get('round2').startedAt = new Date();
+      // roundStatus is stored as object in MongoDB, not Map
+      if (!session.roundStatus) {
+        session.roundStatus = {};
+      }
+      if (!session.roundStatus.round2) {
+        session.roundStatus.round2 = {};
+      }
+      session.roundStatus.round2.startedAt = new Date();
     } else if (round === 1) {
       // Create new session for round 1
       session = new BotInterview({

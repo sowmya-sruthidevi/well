@@ -323,9 +323,9 @@ function BotInterview() {
               </div>
               
               <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-6 text-left">
-                <h2 className="text-xl font-semibold text-purple-400 mb-2">💻 Round 2: Technical Stack</h2>
-                <p className="text-gray-300">Answer in-depth questions about technical architecture, databases, microservices, and modern tech stacks. Duration: ~10 minutes</p>
-                <p className="text-purple-300 text-sm mt-3">→ 5 questions on tech stack, databases, architectures, and best practices</p>
+                <h2 className="text-xl font-semibold text-purple-400 mb-2">💻 Round 2: Technical (Q&A + Coding)</h2>
+                <p className="text-gray-300">Answer in-depth questions about technical architecture, databases, microservices, and write actual code to solve coding challenges. Duration: ~15 minutes</p>
+                <p className="text-purple-300 text-sm mt-3">→ Mix of technical stack questions and coding problems to test your practical skills</p>
               </div>
             </div>
 
@@ -689,7 +689,7 @@ function BotInterview() {
               onClick={startRound2}
               className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg"
             >
-              ➜ Proceed to Round 2 (Technical Stack)
+              ➜ Proceed to Round 2 (Technical Q&A + Coding)
             </button>
           )}
           
