@@ -13,6 +13,7 @@ function BotInterview() {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
+  const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // Track answered questions
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState(null);
@@ -260,6 +261,9 @@ function BotInterview() {
       if (res.data.feedback) {
         speakQuestion(res.data.feedback);
       }
+
+      // Mark question as answered
+      setAnsweredQuestions(prev => new Set([...prev, currentQuestion.questionId]));
 
       // Auto-move to next question after 3 seconds
       setTimeout(() => {
@@ -567,14 +571,14 @@ function BotInterview() {
                   className={`p-3 rounded-lg cursor-pointer transition ${
                     idx === currentQuestionIndex
                       ? "bg-cyan-500 bg-opacity-20 border border-cyan-500"
-                      : userAnswers[q.questionId]
+                      : answeredQuestions.has(q.questionId)
                       ? "bg-green-500 bg-opacity-20 border border-green-600"
                       : "bg-gray-800 border border-gray-700"
                   }`}
                   onClick={() => !submitting && setCurrentQuestionIndex(idx)}
                 >
                   <p className="text-sm font-semibold">Q{idx + 1}</p>
-                  {userAnswers[q.questionId] && (
+                  {answeredQuestions.has(q.questionId) && (
                     <p className="text-xs text-green-400 mt-1">✅ Answered</p>
                   )}
                 </div>
@@ -585,7 +589,7 @@ function BotInterview() {
             <div className="bg-gray-800 rounded-lg p-4">
               <p className="text-sm text-gray-400">Questions Answered</p>
               <p className="text-2xl font-bold text-cyan-400">
-                {Object.keys(userAnswers).length}/{questions.length}
+                {answeredQuestions.size}/{questions.length}
               </p>
             </div>
           </div>
