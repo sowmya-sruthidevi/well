@@ -23,114 +23,63 @@ exports.startInterview = async (req, res) => {
   try {
     const { round = 1, sessionId: existingSessionId } = req.body;
     
-    if (![1, 2].includes(round)) {
-      return res.status(400).json({ error: "Round must be 1 or 2" });
-    }
+    // Single comprehensive interview combining all question types
+    let session = new BotInterview({
+      userId: req.user?.id || req.user?.userId || req.user?._id,
+      sessionId: uuidv4(),
+      currentRound: 1
+    });
 
-    let session;
+    // Load comprehensive mix of all question types
+    const [behavioral, leadership, problemSolving, technicalBasic, technicalStack, technicalCoding] = await Promise.all([
+      InterviewQuestion.aggregate([
+        { $match: { category: "behavioral" } },
+        { $sample: { size: 2 } }
+      ]),
+      InterviewQuestion.aggregate([
+        { $match: { category: { $in: ["leadership", "culture"] } } },
+        { $sample: { size: 1 } }
+      ]),
+      InterviewQuestion.aggregate([
+        { $match: { category: "problem-solving" } },
+        { $sample: { size: 1 } }
+      ]),
+      InterviewQuestion.aggregate([
+        { $match: { category: "technical" } },
+        { $sample: { size: 1 } }
+      ]),
+      InterviewQuestion.aggregate([
+        { $match: { category: "technical-stack" } },
+        { $sample: { size: 2 } }
+      ]),
+      InterviewQuestion.aggregate([
+        { $match: { category: "technical-coding" } },
+        { $sample: { size: 2 } }
+      ])
+    ]);
 
-    if (existingSessionId && round === 2) {
-      // Get existing session for round 2
-      session = await BotInterview.findOne({ sessionId: existingSessionId });
-      if (!session) {
-        return res.status(404).json({ error: "Session not found" });
-      }
-      
-      // Clear questions for round 2
-      session.questions = [];
-      session.currentRound = 2;
-      // roundStatus is stored as object in MongoDB, not Map
-      if (!session.roundStatus) {
-        session.roundStatus = {};
-      }
-      if (!session.roundStatus.round2) {
-        session.roundStatus.round2 = {};
-      }
-      session.roundStatus.round2.startedAt = new Date();
-    } else if (round === 1) {
-      // Create new session for round 1
-      session = new BotInterview({
-        userId: req.user?.id || req.user?.userId || req.user?._id,
-        sessionId: uuidv4(),
-        currentRound: 1,
-        roundStatus: new Map([
-          ['round1', { completed: false, startedAt: new Date() }],
-          ['round2', { completed: false }]
-        ])
+    if (behavioral.length === 0 && technicalBasic.length === 0) {
+      return res.status(400).json({ 
+        error: "Interview questions not properly seeded. Please run seed script." 
       });
-    } else {
-      return res.status(400).json({ error: "Invalid round or sessionId" });
     }
 
-    // Get questions based on round
-    let questions;
+    // Shuffle them together for variety
+    const allQuestions = [
+      ...behavioral,
+      ...leadership,
+      ...problemSolving,
+      ...technicalBasic,
+      ...technicalStack,
+      ...technicalCoding
+    ].sort(() => 0.5 - Math.random()); // Shuffle array
 
-    if (round === 1) {
-      // ROUND 1: Mixed Interview (Behavioral + Basic Technical)
-      // Get diverse question types for variety
-      const [behavioral, leadership, problemSolving, technical] = await Promise.all([
-        InterviewQuestion.aggregate([
-          { $match: { category: "behavioral", round: 1 } },
-          { $sample: { size: 2 } }
-        ]),
-        InterviewQuestion.aggregate([
-          { $match: { category: { $in: ["leadership", "culture"] }, round: 1 } },
-          { $sample: { size: 1 } }
-        ]),
-        InterviewQuestion.aggregate([
-          { $match: { category: "problem-solving", round: 1 } },
-          { $sample: { size: 1 } }
-        ]),
-        InterviewQuestion.aggregate([
-          { $match: { category: "technical", round: 1 } },
-          { $sample: { size: 1 } }
-        ])
-      ]);
-
-      if (behavioral.length === 0 && technical.length === 0) {
-        return res.status(400).json({ 
-          error: "Interview questions not properly seeded. Please run seed script." 
-        });
-      }
-
-      questions = [
-        ...behavioral,
-        ...leadership,
-        ...problemSolving,
-        ...technical
-      ].map(q => ({
-        _id: q._id,
-        questionText: q.questionText,
-        timeLimit: q.timeLimit,
-        category: q.category
-      }));
-    } else {
-      // ROUND 2: Advanced Technical Interview (Stack + Coding)
-      // Randomly select from large pool for variety
-      const [stackQuestions, codingQuestions] = await Promise.all([
-        InterviewQuestion.aggregate([
-          { $match: { category: "technical-stack", round: 2 } },
-          { $sample: { size: 3 } }
-        ]),
-        InterviewQuestion.aggregate([
-          { $match: { category: "technical-coding", round: 2 } },
-          { $sample: { size: 2 } }
-        ])
-      ]);
-
-      if (stackQuestions.length === 0 && codingQuestions.length === 0) {
-        return res.status(400).json({ 
-          error: "No technical questions available. Please seed the database." 
-        });
-      }
-
-      questions = [...stackQuestions, ...codingQuestions].map(q => ({
-        _id: q._id,
-        questionText: q.questionText,
-        timeLimit: q.timeLimit,
-        category: q.category
-      }));
-    }
+    const questions = allQuestions.map(q => ({
+      _id: q._id,
+      questionText: q.questionText,
+      timeLimit: q.timeLimit,
+      category: q.category
+    }));
 
     // Add questions to session
     session.questions = questions.map(q => ({
@@ -145,32 +94,23 @@ exports.startInterview = async (req, res) => {
     session.totalQuestions = session.questions.length;
     session.answeredQuestions = 0;
 
-    // Initialize scores for the round
-    if (round === 1) {
-      session.scores.round1 = {
-        communicationSkills: 0,
-        problemSolving: 0,
-        leadershipPotential: 0,
-        cultureFit: 0,
-        technicalKnowledge: 0,
-        overall: 0
-      };
-    } else {
-      session.scores.round2 = {
-        technicalDepth: 0,
-        stackKnowledge: 0,
-        architectureUnderstanding: 0,
-        bestPractices: 0,
-        problemSolving: 0,
-        overall: 0
-      };
-    }
+    // Initialize comprehensive scoring
+    session.scores.overall = {
+      communicationSkills: 0,
+      problemSolving: 0,
+      leadershipPotential: 0,
+      cultureFit: 0,
+      technicalKnowledge: 0,
+      technicalDepth: 0,
+      codingAbility: 0,
+      overall: 0
+    };
 
     await session.save();
 
     res.json({
       sessionId: session.sessionId,
-      round: round,
+      round: 1,
       totalQuestions: session.totalQuestions,
       questions: session.questions.map(q => ({
         questionId: q.questionId,
