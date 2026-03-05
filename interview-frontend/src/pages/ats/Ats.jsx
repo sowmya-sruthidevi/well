@@ -6,6 +6,8 @@ import GlassCard from "../../components/GlassCard";
 import { motion } from "framer-motion";
 import api from "../../services/api";
 import Webcam from "react-webcam";
+import jsPDF from "jspdf";
+import { Document, Packer, Paragraph, TextRun } from "docx";
 import {
   BarChart,
   Bar,
@@ -111,6 +113,87 @@ export default function ATS() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const downloadResumePDF = () => {
+    if (!improvedResume) return;
+
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 10;
+    const maxWidth = pageWidth - 2 * margin;
+    let yPosition = margin;
+
+    // Title
+    doc.setFontSize(16);
+    doc.setTextColor(40, 40, 40);
+    doc.text("Optimized Resume", margin, yPosition);
+    yPosition += 10;
+
+    // Content
+    doc.setFontSize(11);
+    doc.setTextColor(60, 60, 60);
+    
+    const lines = improvedResume.split('\n');
+    lines.forEach(line => {
+      const wrappedLines = doc.splitTextToSize(line || ' ', maxWidth);
+      wrappedLines.forEach(wrappedLine => {
+        if (yPosition > pageHeight - margin) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(wrappedLine, margin, yPosition);
+        yPosition += 5;
+      });
+    });
+
+    doc.save("improved-resume.pdf");
+  };
+
+  const downloadResumeDOCX = async () => {
+    if (!improvedResume) return;
+
+    const paragraphs = improvedResume.split('\n').map(line => 
+      new Paragraph({
+        text: line || ' ',
+        run: new TextRun({
+          font: "Calibri",
+          size: 22
+        })
+      })
+    );
+
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: [
+          new Paragraph({
+            text: "Optimized Resume",
+            run: new TextRun({
+              bold: true,
+              size: 28
+            })
+          }),
+          ...paragraphs
+        ]
+      }]
+    });
+
+    try {
+      const blob = await Packer.toBlob(doc);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "improved-resume.docx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating DOCX:", error);
+      alert("Failed to generate DOCX file");
+    }
   };
 
   const copyImprovedResume = () => {
@@ -384,18 +467,34 @@ export default function ATS() {
                 <h3 className="text-2xl font-semibold">
                   ✨ Your Improved Resume
                 </h3>
-                <div className="flex gap-3">
+                <div className="flex gap-2 flex-wrap">
                   <button
                     onClick={copyImprovedResume}
-                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition font-semibold"
+                    title="Copy to clipboard"
                   >
                     📋 Copy
                   </button>
                   <button
                     onClick={downloadImprovedResume}
-                    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition"
+                    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition font-semibold"
+                    title="Download as TXT"
                   >
-                    💾 Download
+                    📄 TXT
+                  </button>
+                  <button
+                    onClick={downloadResumePDF}
+                    className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition font-semibold"
+                    title="Download as PDF"
+                  >
+                    📕 PDF
+                  </button>
+                  <button
+                    onClick={downloadResumeDOCX}
+                    className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition font-semibold"
+                    title="Download as DOCX"
+                  >
+                    📘 DOCX
                   </button>
                 </div>
               </div>
