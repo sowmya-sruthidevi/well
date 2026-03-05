@@ -5,6 +5,8 @@ import Layout from "../../components/Layout";
 import Webcam from "react-webcam";
 import Editor from "@monaco-editor/react";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export default function TechnicalRound() {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
@@ -57,7 +59,7 @@ export default function TechnicalRound() {
   const startTechnical = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/technical/start",
+        `${API_URL}/api/technical/start`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -92,7 +94,7 @@ export default function TechnicalRound() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/technical/run",
+        `${API_URL}/api/technical/run`,
         {
           sessionId: session.sessionId,
           code: currentState.code,
@@ -128,7 +130,7 @@ export default function TechnicalRound() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/technical/submit",
+        `${API_URL}/api/technical/submit`,
         {
           sessionId: session.sessionId,
           code: currentState.code,

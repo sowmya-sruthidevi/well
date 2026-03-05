@@ -32,8 +32,9 @@ function BotInterview() {
     const initializeInterview = async () => {
       try {
         setLoading(true);
+        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
         const res = await axios.post(
-          "http://localhost:5000/api/bot-interview/start",
+          `${API_URL}/api/bot-interview/start`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -185,8 +186,9 @@ function BotInterview() {
 
     try {
       setSubmitting(true);
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
       const res = await axios.post(
-        "http://localhost:5000/api/bot-interview/submit-answer",
+        `${API_URL}/api/bot-interview/submit-answer`,
         {
           sessionId,
           questionId: currentQuestion.questionId,
@@ -238,9 +240,10 @@ function BotInterview() {
       setSubmitting(true);
       const duration = sessionStartTime.current ? 
         Math.round((new Date() - sessionStartTime.current) / 1000) : 0;
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
       const res = await axios.post(
-        "http://localhost:5000/api/bot-interview/finish",
+        `${API_URL}/api/bot-interview/finish`,
         {
           sessionId,
           duration

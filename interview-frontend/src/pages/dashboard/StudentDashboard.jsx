@@ -21,7 +21,7 @@ export default function StudentDashboard() {
 
         // Dashboard API
         const dashboard = await axios.get(
-          "http://localhost:5000/api/dashboard",
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/dashboard`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }

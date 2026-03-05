@@ -40,8 +40,9 @@ function GDRoom() {
       try {
         setTimeLeft(5 * 60); // Reset to 5:00 for fresh start
         setUserSpeakingTime(0); // Reset speaking time
+        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
         const res = await axios.post(
-          "http://localhost:5000/api/gd/start",
+          `${API_URL}/api/gd/start`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -122,9 +123,10 @@ function GDRoom() {
         if (finalTranscript.trim() && !evaluationRef.current && sessionRef.current?.sessionId) {
           const recognizedMessage = finalTranscript.trim();
           setInput(recognizedMessage);
+          const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
           axios.post(
-            "http://localhost:5000/api/gd/message",
+            `${API_URL}/api/gd/message`,
             {
               sessionId: sessionRef.current.sessionId,
               message: recognizedMessage
@@ -195,11 +197,12 @@ function GDRoom() {
     
     try {
       const durationInSeconds = startTimeStamp ? Math.round((Date.now() - startTimeStamp) / 1000) : 0;
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
       
       // Step 1: Get evaluation from AI
       console.log("📊 Getting AI evaluation...");
       const evalRes = await axios.post(
-        "http://localhost:5000/api/gd/evaluate",
+        `${API_URL}/api/gd/evaluate`,
         {
           sessionId: session.sessionId,
           speakingTime: userSpeakingTime,
@@ -219,7 +222,7 @@ function GDRoom() {
       try {
         console.log("💾 Saving GD result...");
         await axios.post(
-          "http://localhost:5000/api/gd/save-result",
+          `${API_URL}/api/gd/save-result`,
           {
             sessionId: session.sessionId,
             scores: evaluation,
@@ -302,8 +305,9 @@ function GDRoom() {
       if (evaluationRef.current) break;
 
       try {
+        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
         const res = await axios.post(
-          "http://localhost:5000/api/gd/next",
+          `${API_URL}/api/gd/next`,
           { sessionId },
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -348,12 +352,13 @@ function GDRoom() {
     if (!messageToSend) return;
 
     try {
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
       // Step 1: Analyze message with AI first
       console.log("🤖 Analyzing message with AI...");
       setShowingFeedback(true);
       
       const feedbackRes = await axios.post(
-        "http://localhost:5000/api/gd/analyze-message",
+        `${API_URL}/api/gd/analyze-message`,
         {
           sessionId: session.sessionId,
           message: messageToSend,
@@ -372,7 +377,7 @@ function GDRoom() {
 
       // Step 2: Send message to API
       const res = await axios.post(
-        "http://localhost:5000/api/gd/message",
+        `${API_URL}/api/gd/message`,
         {
           sessionId: session.sessionId,
           message: messageToSend

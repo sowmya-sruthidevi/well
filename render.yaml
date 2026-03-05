@@ -1,0 +1,23 @@
+services:
+  # Backend API Service
+  - type: web
+    name: ats-interview-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd ats-backend && npm install
+    startCommand: cd ats-backend && node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false # Set this manually in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true # Render will auto-generate a secure value
+      - key: OPENAI_API_KEY
+        sync: false # Set this manually in Render dashboard
+      - key: FRONTEND_URL
+        sync: false # Set to your Vercel frontend URL
