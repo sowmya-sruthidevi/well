@@ -53,7 +53,7 @@ app.use("/api/dashboard",dashboardRoutes);
 app.use("/api/technical",technicalRoutes);
 app.use("/api/bot-interview",botInterviewRoutes);
 
-// Serve frontend static files (for Render deployment)
+//Serve frontend static files (for Render deployment)
 const buildPath = path.resolve(__dirname, "../interview-frontend/build");
 console.log("Looking for build at:", buildPath);
 console.log("Build exists:", fs.existsSync(buildPath));
@@ -61,8 +61,9 @@ console.log("Build exists:", fs.existsSync(buildPath));
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
   
-  // Catch-all route for client-side routing
-  app.get("*", (req, res) => {
+  // Catch-all route for client-side routing (must be after API routes)
+  // Exclude API routes from catch-all
+  app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(buildPath, "index.html"));
   });
 } else {
@@ -82,17 +83,6 @@ if (fs.existsSync(buildPath)) {
         "/api/dashboard",
         "/api/questions"
       ]
-    });
-  });
-} else {
-  console.warn("⚠️  Frontend build not found. API-only mode.");
-  
-  // Simple root route for health check
-  app.get("/", (req, res) => {
-    res.status(200).json({ 
-      status: "Backend is running",
-      mongodb: mongoose.connection.readyState === 1 ? "Connected" : "Not Connected",
-      apiEndpoints: ["/api/auth", "/api/bot-interview", "/api/ats", "/api/gd", "/api/technical"]
     });
   });
 }
