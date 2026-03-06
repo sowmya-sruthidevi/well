@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
@@ -7,8 +7,6 @@ import AnimatedBot from '../../components/AnimatedBot';
 
 function BotInterview() {
   const navigate = useNavigate();
-  const [currentRound, setCurrentRound] = useState(1);
-  const [roundSelection, setRoundSelection] = useState(true); // Show round selection screen
   const [sessionId, setSessionId] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -30,17 +28,8 @@ function BotInterview() {
   const sessionStartTime = useRef(null);
   const token = localStorage.getItem('token');
 
-  // Initialize component - start interview directly
-  useEffect(() => {
-    setLoading(false);
-    // Auto-start interview
-    setTimeout(() => {
-      initializeInterview(1);
-    }, 500);
-  }, []);
-
   // Initialize interview session
-  const initializeInterview = async (round = 1, existingSessionId = null) => {
+  const initializeInterview = useCallback(async (round = 1, existingSessionId = null) => {
     try {
       setLoading(true);
       const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
@@ -59,8 +48,6 @@ function BotInterview() {
 
       setSessionId(res.data.sessionId);
       setQuestions(res.data.questions);
-      setCurrentRound(1);
-      setRoundSelection(false);
       sessionStartTime.current = new Date();
       
       // Speak the first question
@@ -75,12 +62,80 @@ function BotInterview() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate, token]);
 
-  // Start comprehensive interview
-  const startInterview = () => {
-    initializeInterview(1);
-  };
+  // Initialize component - start interview directly
+  useEffect(() => {
+    setLoading(false);
+    // Auto-start interview
+    setTimeout(() => {
+      initializeInterview(1);
+    }, 500);
+  }, [initializeInterview]);
+
+  // Finish interview and get evaluation
+  const finishInterview = useCallback(async () => {
+    try {
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const duration = sessionStartTime.current
+        ? Math.floor((Date.now() - sessionStartTime.current) / 1000)
+        : 0;
+
+      const response = await axios.post(
+        `${API_URL}/api/bot-interview/finish`,
+        { sessionId, duration },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setEvaluation(response.data);
+      
+      // Save to database
+      await axios.post(
+        `${API_URL}/api/bot-interview/save`,
+        {
+          sessionId,
+          evaluation: response.data,
+          duration
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error("Error finishing interview:", error);
+      alert("Failed to complete interview. Please try again.");
+    }
+  }, [sessionId, token]);
+
+  // Move to next question
+  const moveToNextQuestion = useCallback(() => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setFeedback(null);
+      setRecordingText("");
+    } else {
+      finishInterview();
+    }
+  }, [currentQuestionIndex, questions.length, finishInterview]);
+
+  // Function to make bot speak
+  const speakQuestion = useCallback((text) => {
+    if (isBotMuted) return; // Don't speak if muted
+    
+    if (speechSynthesisRef.current) {
+      // Cancel any ongoing speech
+      speechSynthesisRef.current.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;  // Slightly slower for clarity
+      utterance.pitch = 1.1;
+      utterance.volume = 1.0;
+
+      utterance.onstart = () => setIsBotSpeaking(true);
+      utterance.onend = () => setIsBotSpeaking(false);
+      utterance.onerror = () => setIsBotSpeaking(false);
+
+      speechSynthesisRef.current.speak(utterance);
+    }
+  }, [isBotMuted]);
 
   // Timer for current question
   useEffect(() => {
@@ -101,7 +156,7 @@ function BotInterview() {
 
     setTimeLeft(timeLimit);
     return () => clearInterval(interval);
-  }, [currentQuestionIndex, questions, evaluation, sessionId]);
+  }, [currentQuestionIndex, questions, evaluation, sessionId, moveToNextQuestion]);
 
   // Initialize speech synthesis for bot
   useEffect(() => {
@@ -116,27 +171,7 @@ function BotInterview() {
         speakQuestion(currentQuestion.question);
       }
     }
-  }, [currentQuestionIndex, questions, evaluation]);
-
-  // Function to make bot speak
-  const speakQuestion = (text) => {
-    if (isBotMuted) return; // Don't speak if muted
-    
-    if (speechSynthesisRef.current) {
-      // Cancel any ongoing speech
-      speechSynthesisRef.current.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;  // Slightly slower for clarity
-      utterance.pitch = 1.1; // Slightly higher pitch
-      utterance.volume = 1;
-
-      utterance.onstart = () => setIsBotSpeaking(true);
-      utterance.onend = () => setIsBotSpeaking(false);
-
-      speechSynthesisRef.current.speak(utterance);
-    }
-  };
+  }, [currentQuestionIndex, questions, evaluation, feedback, speakQuestion]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -241,45 +276,6 @@ function BotInterview() {
     } catch (err) {
       console.error("Failed to submit answer:", err);
       alert("Failed to submit answer. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Move to next question
-  const moveToNextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setFeedback(null);
-      setRecordingText("");
-    } else {
-      finishInterview();
-    }
-  };
-
-  // Finish interview and get evaluation
-  const finishInterview = async () => {
-    try {
-      setSubmitting(true);
-      const duration = sessionStartTime.current ? 
-        Math.round((new Date() - sessionStartTime.current) / 1000) : 0;
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
-      const res = await axios.post(
-        `${API_URL}/api/bot-interview/finish`,
-        {
-          sessionId,
-          duration
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      setEvaluation(res.data);
-    } catch (err) {
-      console.error("Failed to finish interview:", err);
-      alert("Failed to finish interview. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -655,7 +651,6 @@ function BotInterview() {
           
           <button
             onClick={() => {
-              setRoundSelection(true);
               setEvaluation(null);
               setQuestions([]);
               setCurrentQuestionIndex(0);
