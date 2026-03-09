@@ -109,7 +109,8 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error("Error name:", err.name);
   console.error("Error message:", err.message);
   console.error("Full error:", err);
-  process.exit(1); // Exit if DB fails - Render will restart
+  // Keep service alive so Render doesn't return 502 during transient DB/network issues.
+  // API routes that need DB will still return errors until DB reconnects.
 });
 
 const PORT = process.env.PORT || 5000;
