@@ -15,12 +15,17 @@ const allowedOrigins = [
   process.env.FRONTEND_URL // Will be your Vercel URL
 ].filter(Boolean); // Remove undefined values
 
+const vercelOriginPattern = /^https:\/\/.*\.vercel\.app$/;
+
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    const isAllowedOrigin =
+      allowedOrigins.indexOf(origin) !== -1 || vercelOriginPattern.test(origin);
+
+    if (isAllowedOrigin || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
