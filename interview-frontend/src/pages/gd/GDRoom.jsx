@@ -40,7 +40,7 @@ function GDRoom() {
       try {
         setTimeLeft(5 * 60); // Reset to 5:00 for fresh start
         setUserSpeakingTime(0); // Reset speaking time
-        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+        const API_URL = process.env.REACT_APP_API_URL || "";
         const res = await axios.post(
           `${API_URL}/api/gd/start`,
           {},
@@ -123,7 +123,7 @@ function GDRoom() {
         if (finalTranscript.trim() && !evaluationRef.current && sessionRef.current?.sessionId) {
           const recognizedMessage = finalTranscript.trim();
           setInput(recognizedMessage);
-          const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+          const API_URL = process.env.REACT_APP_API_URL || "";
 
           axios.post(
             `${API_URL}/api/gd/message`,
@@ -197,7 +197,7 @@ function GDRoom() {
     
     try {
       const durationInSeconds = startTimeStamp ? Math.round((Date.now() - startTimeStamp) / 1000) : 0;
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_URL = process.env.REACT_APP_API_URL || "";
       
       // Step 1: Get evaluation from AI
       console.log("📊 Getting AI evaluation...");
@@ -305,7 +305,7 @@ function GDRoom() {
       if (evaluationRef.current) break;
 
       try {
-        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+        const API_URL = process.env.REACT_APP_API_URL || "";
         const res = await axios.post(
           `${API_URL}/api/gd/next`,
           { sessionId },
@@ -352,7 +352,7 @@ function GDRoom() {
     if (!messageToSend) return;
 
     try {
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_URL = process.env.REACT_APP_API_URL || "";
       // Step 1: Analyze message with AI first
       console.log("🤖 Analyzing message with AI...");
       setShowingFeedback(true);

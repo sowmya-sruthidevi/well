@@ -32,7 +32,7 @@ function BotInterview() {
   const initializeInterview = useCallback(async (round = 1, existingSessionId = null) => {
     try {
       setLoading(true);
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_URL = process.env.REACT_APP_API_URL || "";
       const payload = { round: 1 }; // Always use round 1 for comprehensive interview
       if (existingSessionId) {
         payload.sessionId = existingSessionId;
@@ -76,7 +76,7 @@ function BotInterview() {
   // Finish interview and get evaluation
   const finishInterview = useCallback(async () => {
     try {
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_URL = process.env.REACT_APP_API_URL || "";
       const duration = sessionStartTime.current
         ? Math.floor((Date.now() - sessionStartTime.current) / 1000)
         : 0;
@@ -241,7 +241,7 @@ function BotInterview() {
 
     try {
       setSubmitting(true);
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_URL = process.env.REACT_APP_API_URL || "";
       const res = await axios.post(
         `${API_URL}/api/bot-interview/submit-answer`,
         {

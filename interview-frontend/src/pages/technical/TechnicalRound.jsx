@@ -5,7 +5,7 @@ import Layout from "../../components/Layout";
 import Webcam from "react-webcam";
 import Editor from "@monaco-editor/react";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = process.env.REACT_APP_API_URL || "";
 
 export default function TechnicalRound() {
   const navigate = useNavigate();
