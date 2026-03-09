@@ -9,7 +9,8 @@ services:
 
   backend:
     build:
-      context: ./ats-backend
+      context: .
+      dockerfile: ats-backend/Dockerfile
     restart: unless-stopped
     depends_on:
       - mongo
