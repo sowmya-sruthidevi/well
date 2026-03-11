@@ -17,6 +17,10 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 function App() {
   return (
     <BrowserRouter>
+      <div className="sticky top-0 z-50 px-6 py-3 bg-[#0b1120]/90 backdrop-blur-md border-b border-white/10 text-white font-bold text-lg">
+        HireGenics
+      </div>
+
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
