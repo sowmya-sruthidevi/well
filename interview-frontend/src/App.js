@@ -17,8 +17,11 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 function App() {
   return (
     <BrowserRouter>
-      <div className="sticky top-0 z-50 px-6 py-3 bg-[#0b1120]/90 backdrop-blur-md border-b border-white/10 text-white font-bold text-lg">
-        HireGenics
+      <div className="sticky top-0 z-50 px-6 py-3 bg-[#0b1120]/90 backdrop-blur-md border-b border-white/10">
+        <h1 className="text-3xl font-extrabold leading-none lowercase tracking-tight">
+          <span className="text-blue-500">hire</span>
+          <span className="text-gray-300">genics</span>
+        </h1>
       </div>
 
       <Routes>
